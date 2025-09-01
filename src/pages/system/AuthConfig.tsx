@@ -3,6 +3,7 @@ import {Button, Form, Input, App, Row, Col, Switch} from 'antd';
 
 import {getPwdRuleApi} from "../../api/admin/AdminApi";
 import {setAuthConfigApi} from "../../api/system/SystemApi";
+import {checkRegExp, isCrontab, isPositiveInteger} from "../../util/Validator";
 
 const Index = (_props: any, ref: any) => {
     const [form] = Form.useForm();
@@ -55,30 +56,30 @@ const Index = (_props: any, ref: any) => {
                         autoComplete="off"
                         onFinish={onFinish}
                     >
-                        <Form.Item label='登录密码正则' name='pwdReg' rules={[{ required: true, message: '请输入登录密码正则' }]}>
+                        <Form.Item label='登录密码正则' name='pwdReg' rules={[{ required: true, message: '请输入登录密码正则' },{validator:checkRegExp}]}>
                             <Input placeholder='请输入登录密码正则规则' />
                         </Form.Item>
                         <Form.Item label='登录密码规则描述' name='pwdRegDesc' rules={[{ required: true, message: '请输入登录密码规则描述' }]}>
                             <Input placeholder='请输入登录密码规则描述' />
                         </Form.Item>
                         <Form.Item   label='连续密码错误次数后冻结账号' name='failNum'
-                                     rules={[{ required: true, message: '请输入连续密码错误多少次数后冻结账号' }]}>
+                                     rules={[{ required: true, message: '请输入连续密码错误多少次数后冻结账号' },{validator:isPositiveInteger}]}>
                             <Input type={"number"} placeholder='请输入连续密码错误多少次数后冻结账号' />
                         </Form.Item>
                         <Form.Item  label='清除密码错误记录的时间(秒)' name='failNumTime'
-                                    rules={[{ required: true, message: '请输入清除密码错误记录的时间(秒)' }]}>
+                                    rules={[{ required: true, message: '请输入清除密码错误记录的时间(秒)' },{validator:isPositiveInteger}]}>
                             <Input type={"number"} placeholder='请输入清除密码错误记录的时间(秒)' />
                         </Form.Item>
                         <Form.Item  label='静默多久后登录失效(秒)' name='timeOut'
-                                    rules={[{ required: true, message: '请输入静默多久后登录失效(秒)' }]}>
+                                    rules={[{ required: true, message: '请输入静默多久后登录失效(秒)' },{validator:isPositiveInteger}]}>
                             <Input type={"number"} placeholder='请输入静默多久后登录失效(秒)' />
                         </Form.Item>
                         <Form.Item  label='密码多少天后必须强制更换' name='passMax'
-                                    rules={[{ required: true, message: '请输入密码多少天后必须强制更换' }]}>
+                                    rules={[{ required: true, message: '请输入密码多少天后必须强制更换' },{validator:isPositiveInteger}]}>
                             <Input type={"number"} placeholder='请输入密码多少天后必须强制更换' />
                         </Form.Item>
                         <Form.Item  label='多少天未修改密码开始提示用户修改密码' name='passWran'
-                                    rules={[{ required: true, message: '请输入多少天未修改密码开始提示用户修改密码' }]}>
+                                    rules={[{ required: true, message: '请输入多少天未修改密码开始提示用户修改密码' },{validator:isPositiveInteger}]}>
                             <Input type={"number"} placeholder='请输入多少天未修改密码开始提示用户修改密码' />
                         </Form.Item>
                         <Form.Item  label='是否开启自动备份' name='autoBackup' valuePropName="checked"
@@ -86,7 +87,7 @@ const Index = (_props: any, ref: any) => {
                             <Switch  checkedChildren={"开启"} unCheckedChildren={"关闭"} />
                         </Form.Item>
                         <Form.Item  label='备份数据库规则' name='bakupDbCron'
-                                    rules={[{ required: true, message: '请输入备份数据库时机的cron表达式' }]}>
+                                    rules={[{ required: true, message: '请输入备份数据库时机的cron表达式' },{validator:isCrontab}]}>
                             <Input  placeholder='请输入备份数据库时机的cron表达式' />
                         </Form.Item>
                         <Button loading={loading} type="primary" htmlType='submit' className='marglauto block '>确定</Button>

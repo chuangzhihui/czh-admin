@@ -3,8 +3,9 @@ import { App, Button, Form, Input, Select, Switch } from 'antd';
 
 import Helper from '../../../util/Helper';
 import CZHEditor from "../../../component/CZHEditor";
-import UploadImg from "../../../component/CZHUploadImg";
+import {CZHFileItemToString, StringToCZHFileItem} from "../../../component/CZHUploadImg";
 import {addSettingApi, editSettingApi} from "../../../api/system/SystemApi";
+import CZHUploadImg from "../../../component/CZHUploadImg";
 const typeList = [
     { value: 1, label: '文本' },
     { value: 2, label: '数字' },
@@ -25,7 +26,7 @@ const Index = (_props: any, ref: any) => {
             }
             if(_props.data.type==3)
             {
-                value=value.split(",")
+                value=StringToCZHFileItem(value)
             }
             setTimeout(()=>{
                 formRef.current.setFieldsValue({
@@ -75,7 +76,7 @@ const Index = (_props: any, ref: any) => {
             data.value = data.value ? 1 : 0;
         }else if(data.type===3)
         {
-            data.value=data.value.join(",")
+            data.value=CZHFileItemToString(data.value);
         }
        let api=addSettingApi;
         if (_props.type == 'edit') {
@@ -129,9 +130,11 @@ const Index = (_props: any, ref: any) => {
                                     <Input autoComplete='off' placeholder='请输入' />
                                 </Form.Item>}
                                 {/* 图片 */}
-                                {getFieldValue('type') === 3 && <Form.Item className='row10' label='配置值' name='value' rules={[{ required: true, message: '请输入内容' }]}>
-                                    <UploadImg   />
-                                </Form.Item>}
+                                {getFieldValue('type') === 3 &&
+                                    <Form.Item className='row10' label='配置值' name='value' rules={[{ required: true, message: '请输入内容' }]}>
+                                        <CZHUploadImg max={1} />
+                                    </Form.Item>
+                                }
                                 {/* 图文 */}
                                 {getFieldValue('type') === 4 && <Form.Item className='row10' label='配置值' name='value' rules={[{ required: true, message: '请输入内容' }]}>
                                     <CZHEditor ref={editRef} />
