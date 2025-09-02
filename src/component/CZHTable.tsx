@@ -46,7 +46,7 @@ const CZHTable=(props:CustomerTableProps, ref:any)=>{
             if(res.code===200)
             {
                 setTotal(res.data.total);
-                setData(initData(res.data.list, res.data.all))
+                setData(initData(res.data.list, res.data.total))
             }else{
                 message.error(res.msg)
             }
@@ -55,7 +55,9 @@ const CZHTable=(props:CustomerTableProps, ref:any)=>{
     const initData=(arry:any[], total:number,pkey=""):any[]=> {
         let arryNew:any[] = []
         arry.map((item, index) => {
+            console.log(index, total, pageSize, page, orderBy);
             let key = Helper.getNum(index, total, pageSize, page, orderBy)
+
             if(pkey!="")
             {
                 key=pkey+"-"+key
@@ -69,6 +71,9 @@ const CZHTable=(props:CustomerTableProps, ref:any)=>{
         return arryNew
     }
     const onRefresh=(refreshPage:number)=>{
+        if(!refreshPage){
+            refreshPage=1;
+        }
         if(refreshPage===page)
         {
             getList();

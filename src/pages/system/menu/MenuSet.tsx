@@ -27,7 +27,7 @@ const Index = (_props: any, ref: any) => {
 	}))
 	const refresh = () => {
 		console.log('菜单管理');
-		tableRef.current.onRefresh()
+		tableRef.current.onRefresh(1)
 	}
 	// 列表
 	const columns:any = [
@@ -172,7 +172,7 @@ const Index = (_props: any, ref: any) => {
 				expandable={{
 					childrenColumnName:"child",
 					expandedRowClassName:"expandedRowStyle",
-					indentSize:30,
+					indentSize:30
 				}}
 				auto={true}
 				scroll={{ x:1010 }}

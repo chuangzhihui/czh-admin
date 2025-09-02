@@ -1,4 +1,4 @@
-import {CZHFileItem} from "../component/CZHUploadImg";
+
 
 export default class Helper {
 	static getNum(index:number, total:number, size:number, page:number, orderBy:string) {
@@ -11,7 +11,7 @@ export default class Helper {
 		if (num < 10) {
 			num = '0' + num;
 		}
-		return num
+		return String(num)
 	}
 	static getNums(value:any) {
 
@@ -65,14 +65,7 @@ export default class Helper {
 		}
 		return fileList;
 	}
-	static fileList2str(fileList:CZHFileItem[]){
-		var imgs=[];
-		for(var i=0;i<fileList.length;i++)
-		{
-			imgs.push(fileList[i].url)
-		}
-		return imgs.join(",")
-	}
+
 
 	static regCheck(regRule:any,value:any){
 
