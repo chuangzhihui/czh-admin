@@ -3,7 +3,10 @@ import { Button, Form, Input, App } from 'antd';
 import CustomerSelect from "../../../component/CZHSelect";
 import Helper from "../../../util/Helper";
 import {addAdminApi, editAdminApi, getPwdRuleApi} from "../../../api/admin/AdminApi";
-import CZHUploadImg, {CZHFileItemToString, StringToCZHFileItem} from "../../../component/CZHUploadImg";
+import CZHUploadMedia, {
+    CZHFileItemToString,
+    StringToCZHFileItem
+} from "../../../component/CZHFileComponent/CZHUploadMedia";
 const Index = (_props: any, ref: any) => {
     const { message } = App.useApp();
     const formRef:any=useRef(null);
@@ -76,7 +79,7 @@ const Index = (_props: any, ref: any) => {
                 <CustomerSelect type='allrole' />
             </Form.Item>
             <Form.Item label='选择图片' name='imgs' rules={[{ required: true, message: '请选择图片' }]}>
-                <CZHUploadImg max={2} />
+                <CZHUploadMedia max={2}  />
             </Form.Item>
             <Button type='primary' htmlType='submit' className='marglauto block margt20'>确定</Button>
         </Form>

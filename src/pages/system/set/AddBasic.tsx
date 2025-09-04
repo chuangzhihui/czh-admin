@@ -3,9 +3,8 @@ import { App, Button, Form, Input, Select, Switch } from 'antd';
 
 import Helper from '../../../util/Helper';
 import CZHEditor from "../../../component/CZHEditor";
-import {CZHFileItemToString, StringToCZHFileItem} from "../../../component/CZHUploadImg";
 import {addSettingApi, editSettingApi} from "../../../api/system/SystemApi";
-import CZHUploadImg from "../../../component/CZHUploadImg";
+import CZHUploadMedia, {CZHFileItemToString, StringToCZHFileItem} from '../../../component/CZHFileComponent/CZHUploadMedia';
 const typeList = [
     { value: 1, label: '文本' },
     { value: 2, label: '数字' },
@@ -132,12 +131,12 @@ const Index = (_props: any, ref: any) => {
                                 {/* 图片 */}
                                 {getFieldValue('type') === 3 &&
                                     <Form.Item className='row10' label='配置值' name='value' rules={[{ required: true, message: '请输入内容' }]}>
-                                        <CZHUploadImg max={1} />
+                                        <CZHUploadMedia types={[1]} max={1} />
                                     </Form.Item>
                                 }
                                 {/* 图文 */}
                                 {getFieldValue('type') === 4 && <Form.Item className='row10' label='配置值' name='value' rules={[{ required: true, message: '请输入内容' }]}>
-                                    <CZHEditor ref={editRef} />
+                                    <CZHEditor  />
                                 </Form.Item>}
                                 {/* 开关 */}
                                 {getFieldValue('type') === 5 && <Form.Item className='row10' label='配置值' name='value' required valuePropName='checked'>

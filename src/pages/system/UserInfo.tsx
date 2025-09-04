@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Button, Form, Input, App } from 'antd';
-import FileList, {chooseFileResult} from '../../component/CZHFileList';
+import CZHFileList, { CZHFileItem} from '../../component/CZHFileComponent/CZHFileList';
 import {editAvatarApi} from "../../api/admin/AdminApi";
-import CZHImageCrop from "../../component/CZHImageCrop";
 
 interface types {
     value?: string;
@@ -10,31 +9,33 @@ interface types {
 }
 // 上传图片组件
 const CustomUpload: React.FC<types> = ({ value = '', onChange }) => {
-    const fileRef: any = useRef(null);
     const triggerChange = (url: string) => {
         onChange?.(url);
     };
 
-    // @ts-ignore
+    const chooseFile=()=>{
+        CZHFileList.open({
+            types:[1],
+            crop:true,
+            cropProps:{
+                aspect:1/1,
+                showGrid:true,
+                children:<></>
+            },
+            onOk:(files:CZHFileItem[])=>{
+                triggerChange(files[0].url)
+            }
+        })
+    }
     return (
         <React.Fragment>
             <div className='editavatar cursor' style={{ border: value !== '' ? 0 : '' }} onClick={() => {
-                fileRef.current.refresh();
+                chooseFile();
             }}>
                 {value === '' && <img alt='' src={'../../static/default.png'} />}
                 {value !== '' && <img alt='' src={value} style={{ width: '60px', height: '60px' }} />}
                 <span className='zi'>修改头像</span>
             </div>
-
-            {/* 文件库 */}
-            <FileList ref={fileRef} type={1} crop={true} cropProps={{
-                aspect:1/1,
-                showGrid:true,
-            }} onOk={(files:chooseFileResult[]) => {
-                console.log(files);
-                triggerChange(files[0].url)
-            }} />
-
         </React.Fragment>
     )
 }

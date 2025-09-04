@@ -1,5 +1,5 @@
 import React, { useImperativeHandle, forwardRef, useRef, useState, useEffect } from 'react';
-import {Button, Input, theme, App, Tooltip} from 'antd';
+import {Button, Input, theme, App, Tooltip, DatePicker} from 'antd';
 import Title from '../../component/CZHTitle';
 import CZHTable , {CZHPageRequestProps} from "../../component/CZHTable";
 import CZHSelect from "../../component/CZHSelect";
@@ -120,6 +120,11 @@ const Index = (_props: any, ref: any) => {
         <React.Fragment>
             <CZHTableSearch
                 onSearch={(data:any)=>{
+                    if(data.times) {
+                        data.stime = data.times[0].format('YYYY-MM-DD 00:00:00');
+                        data.etime = data.times[1].format('YYYY-MM-DD 23:59:59');
+                        delete data.times;
+                    }
                     setSearch(data)
                 }}
                 items={[
@@ -144,6 +149,13 @@ const Index = (_props: any, ref: any) => {
                         />,
                         label:"操作IP",
                         name:"ip"
+                    }
+                    ,
+                    {
+                        node:  <DatePicker.RangePicker />,
+                        col:6,
+                        label:"操作时间",
+                        name:"times"
                     }
                 ]}
             />

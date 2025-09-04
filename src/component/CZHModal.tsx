@@ -7,7 +7,7 @@ const CZHModal = (props: CZHModalProps) => {
     return(
         <Modal
             centered={true}
-            destroyOnClose={true}
+            destroyOnHidden={true}
             footer={null}
             closeIcon={(<p className='iconfont icon-guanbi'></p>)}
             wrapClassName={"customerModal"}

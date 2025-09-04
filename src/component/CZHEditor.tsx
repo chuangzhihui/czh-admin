@@ -1,73 +1,97 @@
 import React, {forwardRef, useEffect, useRef, useState} from "react";
-import BraftEditor from 'braft-editor';
-// @ts-ignore
-import { ContentUtils } from 'braft-utils'
-import FileList from './CZHFileList';
-// @ts-ignore
-import Table from 'braft-extensions/dist/table';
-import 'braft-editor/dist/index.css'
-import 'braft-extensions/dist/table.css'
+import '@wangeditor/editor/dist/css/style.css' // 引入 css
+import { Editor, Toolbar } from '@wangeditor/editor-for-react'
+import { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
+import CZHFileList, {CZHFileItem} from "./CZHFileComponent/CZHFileList";
 
-
-const Ueditor= (props:any) => {
+export interface  CZHUeditorProps {
+    value?:string;//富文本内容
+    onChange?: (value:string) => void;
+    placeholder?:string;
+}
+const CZHUeditor= (props:CZHUeditorProps) => {
     const fileRef = useRef<any>(null);
-    const [isFullscreen,setFullScreen]=useState(false);
-    const [fullControls]=useState<string[]>( [
-        'fullscreen', 'undo', 'redo', 'separator',
-        'font-size', 'line-height', 'letter-spacing', 'separator',
-        'text-color', 'bold', 'italic', 'underline', 'strike-through', 'separator',
-        'superscript', 'subscript', 'remove-styles', 'emoji', 'separator',
-        'text-indent', 'text-align', 'separator',
-        'headings', 'list-ul', 'list-ol', 'blockquote', 'code', 'separator',
-        'link', 'separator',
-        'hr', 'separator',
-        'table', 'separator',
-        'clear', 'separator',
-    ]);
-    const [controls]=useState<any>([{
-        key: "fullscreen",
-        title: "开启全屏以使用更多功能"
-    }, 'bold', 'italic', 'text-color']);
-    const [editorState,setEditorState]=useState(null);
-    useEffect(()=>{
-        console.log("更新",props.value)
-        setEditorState(BraftEditor.createEditorState(props.value || ""));
-    },[props.value])
-    const onChooseFile=(imgs:string[])=>{
-        setEditorState(ContentUtils.insertMedias(editorState, [{
-            type: 'IMAGE',
-            url: imgs[0]
-        }]));
-    }
-    return (
-        <React.Fragment>
-            <BraftEditor
-                className="no-drag myarea"
-                value={editorState}
-                controls={isFullscreen ? fullControls : controls}
-                extendControls={[
-                    {
-                        key: 'antd-uploader',
-                        type: 'component',
-                        component: (
-                            <button type="button" className="control-item button upload-button" data-title="插入图片" onClick={() => {
-                                fileRef?.current?.refresh?.();
-                            }}>插入图片</button>
-                        )
-                    }
-                ]}
-                placeholder="全屏输入功能更佳"
+    // editor 实例
+    const [editor, setEditor] = useState<IDomEditor | null>(null) // TS 语法S 语法
+    // 编辑器内容
+    const [html, setHtml] = useState(props.value || "")
+    const {placeholder="请输入内容"}=props;
 
-                onBlur={(e:any)=>{
-                    props.onChange(e.toHTML())
-                }}
-                onFullscreen={(e:any) => {
-                    setFullScreen(e)
-                }}
+    // 监听value变化，更新编辑器内容
+    useEffect(() => {
+        if (props.value !== undefined && props.value !== html) {
+            setHtml(props.value || "");
+        }
+    }, [props.value]);
+
+    // 工具栏配置
+    const toolbarConfig: Partial<IToolbarConfig> = {} // TS 语法
+
+    // 编辑器配置
+    const editorConfig:any = {
+        placeholder,
+        MENU_CONF:[]
+    }
+    editorConfig.MENU_CONF['uploadImage'] = {
+        // 自定义选择图片
+        customBrowseAndUpload(insertFn: any) {
+            CZHFileList.open({
+                onOk:(files:CZHFileItem[])=>{
+                    let file:CZHFileItem = files[0];
+                    console.log("选择回调",file,insertFn);
+                    insertFn(file.url,file.name,file.type);
+                },
+                open:true,
+                max:10,
+                types:[1]
+            })
+        },
+    }
+    editorConfig.MENU_CONF['uploadVideo'] = {
+        // 自定义选择视频
+        customBrowseAndUpload(insertFn: any) {
+            CZHFileList.open({
+                onOk:(files:CZHFileItem[])=>{
+                    let file:CZHFileItem = files[0];
+                    console.log("选择回调",file,insertFn);
+                    insertFn(file.url,file.thumb);
+                },
+                open:true,
+                max:10,
+                types:[2]
+            })
+        },
+    }
+    // 及时销毁 editor ，重要！
+    useEffect(() => {
+        return () => {
+            if (editor == null) return
+            editor.destroy()
+            setEditor(null)
+        }
+    }, [editor])
+
+    return (
+        <div style={{ border: '1px solid #ccc', zIndex: 100 }}>
+            <Toolbar
+                editor={editor}
+                defaultConfig={toolbarConfig}
+                mode="default"
+                style={{ borderBottom: '1px solid #ccc' }}
             />
-            {/* 文件库 */}
-            <FileList fileNum={1} ref={fileRef} type={1} onOk={onChooseFile} />
-        </React.Fragment>
+            <Editor
+                defaultConfig={editorConfig}
+                value={html}
+                onCreated={setEditor}
+                onChange={(editor) => {
+                    const newHtml = editor.getHtml();
+                    setHtml(newHtml);
+                    props.onChange?.(editor.getHtml())
+                }}
+                mode="default"
+                style={{ height: '300px', overflowY: 'hidden' }}
+            />
+        </div>
     )
 }
-export default Ueditor;
+export default CZHUeditor;

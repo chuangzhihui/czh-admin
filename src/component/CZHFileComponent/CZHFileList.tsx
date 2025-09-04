@@ -1,18 +1,13 @@
 import React, { useState, forwardRef, useImperativeHandle, useEffect } from 'react';
-import {Button, Input, Select, Image, Pagination, Form, App, Checkbox, Tooltip,} from 'antd';
-import CZHModal from './CZHModal';
-import Title from './CZHTitle'
+import {Button, Input, Select, Image, Pagination, Form, App, Checkbox, Tooltip, Modal, message,} from 'antd';
+import CZHModal from '../CZHModal';
+import Title from '../CZHTitle'
 import CZHUpload, {CZHFileUploadResult} from "./CZHUpload";
-import {addFileApi, delFileApi, getFileListApi} from "../api/system/SystemApi";
-import VideThumb from "../static/shipin.png"
-import ExcelThumb from "../static/excel.png"
-import WordThumb from "../static/word.png"
-import PDFThumb from "../static/PDF.png"
-import ZIPThumb from "../static/ysb.png"
-import OtherThumb from "../static/other.png"
-import DirThumb from "../static/wjj.png"
+import {addFileApi, delFileApi, getFileListApi} from "../../api/system/SystemApi";
 import {ImgCropProps} from "antd-img-crop";
-import Helper from "../util/Helper";
+import Helper from "../../util/Helper";
+import CZHRenderThumb from "./CZHRenderThumb";
+import {createRoot} from "react-dom/client";
 const fileType = [
     { value: 1, label: '图片' },
     { value: 2, label: '视频文件' },
@@ -22,106 +17,6 @@ const fileType = [
     { value: 6, label: '压缩文件' },
     { value: 7, label: '未知类型文件' },
 ];
-
-// 渲染列表
-function GetItems(props:any) {
-    let item = props.item;
-    const [thumbnailUrl, setThumbnailUrl] = useState<any>(null);
-    const openFile=(url:string) => {
-        window.open(url);
-    }
-    useEffect(() => {
-        if(item.domain===4 && item.type===2)
-        {
-            generateThumbnail()
-        }
-    }, []);
-    const generateThumbnail = async () => {
-        try {
-            // 创建视频元素
-            const video = document.createElement('video');
-            video.src = item.url;
-            video.crossOrigin = 'anonymous'; // 处理跨域
-            video.preload = 'metadata';
-
-            // 等待视频元数据加载完成
-            await new Promise((resolve, reject) => {
-                video.onloadedmetadata = resolve;
-                video.onerror = reject;
-            });
-
-            // 快速定位到第一帧
-            video.currentTime = 0.1; // 有时0秒可能是黑屏，用0.1秒更可靠
-
-            // 等待视频帧加载完成
-            await new Promise((resolve) => {
-                video.onseeked = resolve;
-            });
-
-            // 使用Canvas绘制视频帧
-            const canvas = document.createElement('canvas');
-            canvas.width = item.fileWidth;
-            canvas.height = item.fileHeight;
-            const ctx = canvas.getContext('2d');
-
-            // 绘制视频帧到Canvas
-            ctx?.drawImage(video, 0, 0, item.fileWidth, item.fileHeight);
-
-            // 将Canvas内容转换为图片URL
-            const thumbnail = canvas.toDataURL('image/jpeg');
-            setThumbnailUrl(thumbnail);
-            console.log("获取封面图成功",thumbnail);
-        } catch (err) {
-            console.error('Failed to generate thumbnail:', err);
-
-        }
-    };
-    return (
-        <React.Fragment>
-            {/* 图片 */}
-            {item.type == 1 &&  <Image
-                src={item.thumb}
-                width={80}
-                height={80}
-                preview={{
-                    src: item.url,
-                }}
-            />}
-            {/* 视频 */}
-            {item.type == 2 &&  <Image
-                src={item.domain===4?thumbnailUrl:item.thumb}
-                width={80}
-                height={80}
-                placeholder={true}
-                preview={{
-                    destroyOnHidden: true,
-                    imageRender: () => (
-                        <video
-                            muted
-                            width="80%"
-                            height={"80%"}
-                            controls
-                            src={item.url}
-                        />
-                    ),
-                    toolbarRender: () => null,
-                }}
-            />}
-            {/* excel文件 */}
-            {item.type == 3 && <img className='wj cursor' onClick={()=>{openFile(item.url)}} alt='' src={ExcelThumb} />}
-            {/* word文件 */}
-            {item.type == 4 && <img className='wj cursor' alt='' onClick={()=>{openFile(item.url)}} src={WordThumb} />}
-            {/* pdf文件 */}
-            {item.type == 5 && <img className='wj cursor' alt='' onClick={()=>{openFile(item.url)}} src={PDFThumb} />}
-            {/* 压缩包文件 */}
-            {item.type == 6 && <img className='wj cursor' alt='' onClick={()=>{openFile(item.url)}} src={ZIPThumb} />}
-            {/* 未知文件 */}
-            {item.type == 7 && <img className='wj cursor' alt='' onClick={()=>{openFile(item.url)}} src={OtherThumb} />}
-            {/* 虚拟文件夹 */}
-            {item.type == 8 && <img className='wj' alt='' src={DirThumb} title='双击打开文件夹' />}
-        </React.Fragment>
-    )
-}
 export interface CZHFileItem{
     uid:string;//文件ID
     type: number;//文件类型1图片 2视频 3Excel 4word 5pdf 6zip 7未知文件
@@ -132,20 +27,21 @@ export interface CZHFileItem{
     thumb?:string;//缩略图
 }
 export interface fileListProps {
-    type?:number;//文件类型 1图片 2视频 3Excel 4word 5pdf 6zip 7未知文件
+    types?:number[];//文件类型 1图片 2视频 3Excel 4word 5pdf 6zip 7未知文件
     max?:number;//最大数量
     onOk?: (files:CZHFileItem[]) => void;
     crop?:boolean;//上传是否需要裁剪
     cropProps?:ImgCropProps;//裁剪参数
+    open?:boolean;//
 }
-const CZHFileList = (props:fileListProps, _ref:any) => {
-    const { message, modal } = App.useApp();
-    const [open, setOpen] = useState(false);
+const CZHFileList = (props:fileListProps) => {
+
+    const [open, setOpen] = useState<boolean>(props.open || false);
     const [list, setList] = useState([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [pid, setPid] = useState(0);
-    const [type, setType] = useState(props.type || undefined);
+    const [types, setTypes] = useState<number[]>(props.types || []);
     const [name, setName] = useState('');
     const [fileName, setFileName] = useState([{ id: 0, name: '根目录' }])
     const [createVisible, setCreateVisible] = useState<boolean>(false);
@@ -153,29 +49,79 @@ const CZHFileList = (props:fileListProps, _ref:any) => {
     const [loading, setLoading] = useState(false);
     const [value, setValue] = useState<Number[]>([]);
     const [dir,setDir] = useState<string>("admin");
+    const [accept,setAccept] = useState<string>("");
     const {max=1} = props;
     useEffect(() => {
-        getList()
-    }, [page, type, name, pid])
-    // 暴露方法
-    useImperativeHandle(_ref, () => ({
-        setOpen,
-        refresh,
-    }))
-    const refresh = () => {
-        setOpen(true);
-        setPid(0);
-        setPage(1);
-        setValue([])
-        setFileName([{ id: 0, name: '根目录' }]);
+        makeAccepts();
+    }, [types]);
+    const makeAccepts=()=>{
+        let typeArr:string[]=[];
+        if(types.length==0 || types.includes(7)){
+            setAccept("*")
+            return
+        }
+        for (let i=0;i<types.length;i++){
+            let type:number = types[i];
+            if(type==1){
+                typeArr.push("image/*")
+            }else if(type==2){
+                typeArr.push("video/*")
+            }else if(type==3){
+                typeArr.push(".xls")
+                typeArr.push(".xlsx")
+                typeArr.push(".xlsm")
+                typeArr.push(".xlsb")
+                typeArr.push(".xltx")
+                typeArr.push(".xltm")
+            }else if(type==4){
+                typeArr.push(".doc")
+                typeArr.push(".docx")
+                typeArr.push(".docm")
+                typeArr.push(".dot")
+                typeArr.push(".dotx")
+                typeArr.push(".dotm")
+            }else if(type==5){
+                typeArr.push("application/pdf")
+                typeArr.push(".pdf")
+            }else if(type==6){
+                typeArr.push(".zip")
+                typeArr.push(".rar")
+                typeArr.push(".7z")
+                typeArr.push(".tar")
+                typeArr.push(".gz")
+                typeArr.push(".bz2")
+                typeArr.push(".xz")
+                typeArr.push(".iso")
+            }
+        }
+        setAccept(typeArr.join(","));
     }
+    useEffect(() => {
+        getList()
+    }, [page, types, name, pid])
+    // // 暴露方法
+    // useImperativeHandle(_ref, () => ({
+    //     setOpen,
+    //     refresh,
+    //     openStatic
+    // }))
+    // const openStatic=(openOpt:fileListProps)=>{
+    //     console.log(openOpt)
+    //
+    // }
+    // const refresh = () => {
+    //     setOpen(true);
+    //     setPid(0);
+    //     setPage(1);
+    //     setValue([])
+    //     setFileName([{ id: 0, name: '根目录' }]);
+    // }
     useEffect(()=>{
         let dirName="admin";
         for(var i=1;i<fileName.length;i++)
         {
             dirName+=fileName[i].name
         }
-        setDir(dirName)
         console.log("fileName",fileName,dirName)
     },[fileName])
     // 获取文件列表
@@ -186,7 +132,7 @@ const CZHFileList = (props:fileListProps, _ref:any) => {
             orderBy: '',
             pid,
             name,
-            type: type || '',
+            types: types.length>0?types.join(","):"",
         }
         getFileListApi(obj).then(res => {
             if (res.code === 200) {
@@ -264,7 +210,7 @@ const CZHFileList = (props:fileListProps, _ref:any) => {
     }
     // 删除
     const del = (data:any) => {
-        modal.confirm({
+        Modal.confirm({
             title: '警告提示',
             content: '您要删除该项数据吗？删除后将无法恢复！',
             centered: true,
@@ -346,13 +292,14 @@ const CZHFileList = (props:fileListProps, _ref:any) => {
                     <Select
                         placeholder='请选择文件类型'
                         options={fileType}
+                        mode='multiple'
                         className='marginr12'
-                        value={type}
-                        style={{ width: 140 }}
-                        allowClear={props.type ? false : true}
-                        disabled={props.type ? true : false}
-                        onChange={(type) => {
-                            setType(type);
+                        value={types}
+                        style={{ width: 300 }}
+                        allowClear={types.length===0}
+                        disabled={types.length>0}
+                        onChange={(values) => {
+                            setTypes(values);
                             setPage(1);
                         }}
                     />
@@ -361,20 +308,7 @@ const CZHFileList = (props:fileListProps, _ref:any) => {
                         cropProps={props.cropProps}
                         crop={props.crop}
                         multiple={!props.crop}
-                        accept={
-                            props.type==1?"image/*":(
-                                props.type==2?"video/*":(
-                                    props.type==3?".xls,.xlsx":(
-                                        props.type==4?".doc,.docx":(
-                                            props.type==5?".pdf":(
-                                                props.type==6?".zip,.rar":"image/*,video/*,.xls,.xlsx,.doc,.docx,.pdf"
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        }
-
+                        accept={accept}
                         onPercent={(num) => {
                             setPercent(num);
                             if (num >= 100) {
@@ -406,26 +340,26 @@ const CZHFileList = (props:fileListProps, _ref:any) => {
                             onDoubleClick={() => openFolder(item)}
 
                         >
-                            <div className='kk' style={{ border: (item.type == 8 || item.type == 1) ? '0' : '' }}>
-                                <GetItems item={item} />
-                                {/* 是否选中 */}
-                                {/*{isChecked(item) && <div className='mask'>*/}
-                                {/*    <span className='iconfont icon-xuanze'></span>*/}
-                                {/*</div>}*/}
-                                {/* 删除 */}
-                                <span className='iconfont icon-cuowu closeIcon' onClick={(e) => {
-                                    e.preventDefault()
-                                    e.stopPropagation()
-                                    // this.del(item)
-                                    del(item)
-                                }}></span>
-                            </div>
+                            <CZHRenderThumb width={80} height={80} file={{
+                                uid:"uuid-"+Helper.getRandomString(4)+"-"+item.id,
+                                type:item.type,
+                                url:item.url,
+                                width:item.fileWidth,
+                                height:item.fileHeight,
+                                thumb:item.thumb,
+                                name:item.name,
+                            }} onDel={()=>{
+                                del(item)
+                            }}
+                            />
                             <p className={"line1 cursor"}>
                                 {item.type===8?
                                     <>{item.name}</>
                                 :
                                     <Tooltip title={item.name}>
-                                        <Checkbox disabled={props.type!=null && item.type!=props.type} value={item.id}>{item.name}</Checkbox>
+                                        <Checkbox
+                                            // disabled={types && item.type!=props.type}
+                                            value={item.id}>{item.name}</Checkbox>
                                     </Tooltip>
                                 }
                             </p>
@@ -467,5 +401,37 @@ const CZHFileList = (props:fileListProps, _ref:any) => {
         </React.Fragment>
     )
 }
+// 创建一个全局容器用于挂载modal
+const createContainer = () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    return container;
+};
+CZHFileList.open=(props:fileListProps)=>{
+    // 创建容器
+    const container = createContainer();
+    const root = createRoot(container);
 
-export default forwardRef(CZHFileList);
+    // 用于关闭modal的方法
+    const close = () => {
+        root.unmount();
+        container.remove();
+    };
+
+    // 渲染组件
+    root.render(
+        <CZHFileList
+            {...props}
+            open={true}
+            onOk={(files:CZHFileItem[]) => {
+                root.unmount();
+                container.remove();
+                props.onOk?.(files);
+            }}
+        />
+    );
+
+    // 返回关闭方法
+    return { close };
+}
+export default CZHFileList;
