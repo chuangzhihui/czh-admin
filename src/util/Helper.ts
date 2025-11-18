@@ -34,7 +34,6 @@ export default class Helper {
 		var monthBirth = idcard.substring(10, 12);
 		var dayBirth = idcard.substring(12, 14);
 		var birthday = yearBirth + '-' + monthBirth + '-' + dayBirth;
-
 		return birthday
 	}
 
