@@ -64,7 +64,7 @@ const Index = (_props: any, ref: any) => {
         }
     ]
 
-    const xiazai=(item:any)=>{
+    const xiazai=(item:DbBackupVo)=>{
         Modal.confirm({
             title:"提示",
             content:"确定要下载该备份文件吗?",
@@ -74,7 +74,8 @@ const Index = (_props: any, ref: any) => {
                         resolve();
                         if(!res.code && res.code!=500)
                         {
-                            Helper.saveAs(res,item.file_name)
+                            console.log(item)
+                            Helper.saveAs(res,item.fileName)
                         }else{
                             message.success(res.msg);
                         }
@@ -149,7 +150,7 @@ const Index = (_props: any, ref: any) => {
                 return new Promise<void>(resolve => {
                     backUpDbApi().then((res:any) => {
                         resolve()
-                        if (res.code == 1) {
+                        if (res.code ===200) {
                             message.success(res.msg);
                             refresh()
                         } else {
