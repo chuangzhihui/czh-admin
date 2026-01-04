@@ -5,6 +5,7 @@ import  "react-app-polyfill/ie9";
 import  "react-app-polyfill/stable";
 import './css/reset.css';
 import './css/index.css';
+import "./css/main.scss"
 import App from './App'
 import { ConfigProvider } from 'antd';
 import 'dayjs/locale/zh-cn';

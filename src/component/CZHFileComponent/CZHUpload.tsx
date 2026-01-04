@@ -2,7 +2,7 @@ import React, { useState, forwardRef, useImperativeHandle, useEffect } from 'rea
 import {Upload, App, Modal, UploadProps} from 'antd';
 import ImgCrop, {ImgCropProps} from 'antd-img-crop';
 import COS from 'cos-js-sdk-v5';
-import {getTosSignUrlApi, getUploadTokenApi} from "../../api/system/SystemApi";
+import {getTosSignUrlApi, getUploadTokenApi} from "../../api/SystemApi";
 import {HttpResponse} from "../../util/request";
 
 let key = '';

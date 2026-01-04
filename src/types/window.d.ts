@@ -3,5 +3,4 @@ interface Window {
     delDom?: () => void;
     //初始化动画
     reset?: () => void;
-
 }

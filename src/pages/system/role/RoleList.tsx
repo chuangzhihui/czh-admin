@@ -1,24 +1,21 @@
 import React, { useImperativeHandle, forwardRef, useState, useEffect, useRef } from 'react';
 import {App, Button, Input, theme} from 'antd';
-import Title from '../../../component/CZHTitle';
-import CustomerTable, {CZHPageRequestProps} from "../../../component/CZHTable";
-import CZHModal from '../../../component/CZHModal';
+import CZHTable, {CZHTableRef} from "../../../component/CZHTable";
 import AddRole from './AddRole';  // 添加/编辑角色
 import CZHTableSearch from "../../../component/CZHTableSearch";
-import {delRoleApi, roleListApi} from "../../../api/system/SystemApi";
 import {HttpResponse} from "../../../util/request";
-
+import {delRoleApi, roleListApi} from "../../../api/RoleApi";
+import FormModal from "../../../component/CZHModal/FormModal";
+import {Role} from "../../../types/models/role/vo";
+import type { TableColumnsType } from 'antd';
+import {PageDto, PageInfoVo} from "../../../types/models/common";
 const Index = (_props: any, _ref: any) => {
 	const {
 		token: { colorPrimary },
 	} = theme.useToken();
 	const { message, modal } = App.useApp();
-	const tableRef: any = useRef(null);
-	const [open, setOpen] = useState<boolean>(false);
-	const [row, setRow] = useState<{ id?: number, role_name?: string, describe?: string, ids?: [] }>({});
-	const [type, setType] = useState<any>();
-
-	const columns:any = [
+	const tableRef: any = useRef<CZHTableRef | null>(null);
+	const columns:TableColumnsType<Role> = [
 		{
 			title: '序号',
 			align: 'center',
@@ -44,14 +41,20 @@ const Index = (_props: any, _ref: any) => {
 			dataIndex: 'id',
 			align: 'center',
 			width: 150,
-			render: (id: number, item: any) => (
+			render: (id: number, item: Role) => (
 				<div className='flexAllCenter pubbtnbox'>
 					<p style={{ color: colorPrimary }} onClick={() => {
 						let data = JSON.parse(JSON.stringify(item));
 						data.ids = JSON.parse(data.ids);
-						setRow(data)
-						setType('edit')
-						setOpen(true)
+                        FormModal.open({
+                            title:"编辑角色",
+                            children:	<AddRole type={"edit"} data={data}
+                                                  onOk={() => {
+                                                      refresh();
+                                                  }}
+                            />,
+                            width: 900
+                        })
 					}}>编辑</p>
 					<p onClick={() => del(item)} style={{ color: colorPrimary }}>删除</p>
 				</div>
@@ -63,27 +66,19 @@ const Index = (_props: any, _ref: any) => {
 	}))
 	// 手动刷新页面  参数page 非必传 默认当前页码
 	const refresh = () => {
-		tableRef.current.onRefresh()
-	}
-	// 获取列表数据
-	const getList = (info: CZHPageRequestProps, callback:  (res:HttpResponse) => void) => {
-		roleListApi({
-			page: info.page,
-			size: info.size,
-			orderBy: '',
-		}).then(res => {
-			callback(res)
-		})
+		tableRef.current?.onRefresh();
 	}
 	// 首次进入页面初始化
-	const onRefresh = (info: CZHPageRequestProps, callback: (res:HttpResponse) => void) => {
-		getList(info, callback)
+	const onRefresh = (info: PageDto, callback: (res:HttpResponse<PageInfoVo<Role>>) => void) => {
+        roleListApi({
+            page: info.page,
+            size: info.size,
+            orderBy: '',
+        }).then(res => {
+            callback(res)
+        })
 	}
-	const onCancel = () => {
-		setOpen(false);
-		setRow({});
-		setType('');
-	}
+
 	// 删除
 	const del = (data: any) => {
 		modal.confirm({
@@ -107,34 +102,26 @@ const Index = (_props: any, _ref: any) => {
 			<CZHTableSearch
 				buttons={[
 					<Button type="primary" onClick={() => {
-						setOpen(true);
+						FormModal.open({
+                            title:"添加角色",
+                            children:	<AddRole type={"add"}
+                                            onOk={() => {
+                                                refresh();
+                                            }}
+                                        />,
+                            width: 900
+                        })
 					}}>添加角色</Button>
 				]}
 			/>
 
-			<CustomerTable
+			<CZHTable<Role>
 				ref={tableRef}
 				columns={columns}
 				onRefresh={onRefresh}
 				scroll={{ y: window.innerHeight - 368,x:710 }}
 				auto={true}
 			/>
-			{/* 添加/编辑 */}
-			<CZHModal
-				open={open}
-				width={900}
-				onCancel={onCancel}
-				title={(<Title title='添加角色' />)}
-			>
-				<AddRole
-					data={row}
-					type={type}
-					onOk={() => {
-						refresh();
-						onCancel();
-					}}
-				/>
-			</CZHModal>
 		</React.Fragment>
 	)
 };

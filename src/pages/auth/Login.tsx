@@ -3,9 +3,9 @@ import {Button, Form, Input, theme, App, Modal} from 'antd';
 import {
     useNavigate,
 } from "react-router-dom";
-import req, {HttpResponse} from "../../util/request"
-import Helper from "../../util/Helper";
-import {getCaptchaApi, getSystemNameApi, LoginApi} from "../../api/login/LoginApi";
+import {getCaptchaApi, getSystemNameApi, LoginApi} from "../../api/LoginApi";
+import {HttpResponse} from "../../util/request";
+import {AdminLoginVo} from "../../types/models/vo";
 
 const Login = () => {
     let navigate = useNavigate();
@@ -49,7 +49,7 @@ const Login = () => {
     const onFinish = (data:any) => {
         setLoading(true);
         data.uuid = uuid;
-        LoginApi(data).then((res:HttpResponse) => {
+        LoginApi(data).then((res:HttpResponse<AdminLoginVo>) => {
             if (res.code === 200) {
                 localStorage.setItem("czhToken", res.data.token)
                 message.success("登录成功")

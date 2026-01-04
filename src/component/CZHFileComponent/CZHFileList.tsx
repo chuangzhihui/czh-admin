@@ -3,7 +3,7 @@ import {Button, Input, Select, Image, Pagination, Form, App, Checkbox, Tooltip, 
 import CZHModal from '../CZHModal';
 import Title from '../CZHTitle'
 import CZHUpload, {CZHFileUploadResult} from "./CZHUpload";
-import {addFileApi, delFileApi, getFileListApi} from "../../api/system/SystemApi";
+import {addFileApi, delFileApi, getFileListApi} from "../../api/SystemApi";
 import {ImgCropProps} from "antd-img-crop";
 import Helper from "../../util/Helper";
 import CZHRenderThumb from "./CZHRenderThumb";

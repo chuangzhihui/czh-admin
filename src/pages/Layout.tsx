@@ -11,7 +11,7 @@ import SetColor from './system/SetColor';  //主题配色
 // loading页
 import Loading from './Loading';
 import Page404 from "./Page404";
-import {getLoginInfoApi, logoutApi} from "../api/admin/AdminApi";
+import {getLoginInfoApi, logoutApi} from "../api/AdminApi";
 const { Header, Content, Sider } = Layout;
 let rootSubmenuKeys:any[] = [];
 let tabRef:any[] = [];
@@ -391,7 +391,7 @@ const Index = (props:any) => {
                         </Dropdown>
                     </div>
                 </Header>
-                <Content style={{ padding: 5 ,overflowY:"scroll",overflowX:"hidden"}} >
+                <Content style={{ padding: 10,overflow: "hidden",height:"calc(100vh - 90px)",display:"flex"}} >
                     <Tabs
                         className='asdTabs'
                         items={tabs}

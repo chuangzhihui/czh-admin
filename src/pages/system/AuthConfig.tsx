@@ -1,8 +1,8 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
 import {Button, Form, Input, App, Row, Col, Switch} from 'antd';
 
-import {getPwdRuleApi} from "../../api/admin/AdminApi";
-import {setAuthConfigApi} from "../../api/system/SystemApi";
+import {getPwdRuleApi} from "../../api/AdminApi";
+import {setAuthConfigApi} from "../../api/SystemApi";
 import {checkRegExp, isCrontab, isPositiveInteger} from "../../util/Validator";
 
 const Index = (_props: any, ref: any) => {

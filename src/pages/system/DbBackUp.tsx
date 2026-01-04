@@ -1,31 +1,24 @@
 import React, { useImperativeHandle, forwardRef, useRef, useState, useEffect } from 'react';
-import {Button, DatePicker, theme, App, Modal} from 'antd';
-import CZHTable , {CZHPageRequestProps} from "../../component/CZHTable";
+import {Button, DatePicker, theme, App, Modal, TableColumnsType} from 'antd';
+import CZHTable, {CZHTableRef} from "../../component/CZHTable";
 import CZHSelect from "../../component/CZHSelect";
 import CZHTableSearch from "../../component/CZHTableSearch";
 import Helper from "../../util/Helper";
-import {
-    backUpDbApi,
-    downloadApi,
-    getBackDbListApi,
-    removeBackUpFileApi,
-    restoreDbApi
-} from "../../api/system/SystemApi";
+
 import {HttpResponse} from "../../util/request";
+import {DbBackupVo} from "../../types/models/backup/vo";
+import {backUpDbApi, downloadApi, getBackDbListApi, removeBackUpFileApi, restoreDbApi} from "../../api/BackupApi";
+import {PageDto, PageInfoVo} from "../../types/models/common";
 
 const Index = (_props: any, ref: any) => {
     const {
         token: { colorPrimary,colorError,colorWarning },
     } = theme.useToken();
     const { message, modal } = App.useApp();
-    const tableRef: any = useRef(null);
-    const [admin_id, setAdminId] = useState<string>('');
-    const [desc, setDesc] = useState<string>('');
-    const [address, setAddress] = useState<string>('');
-    const [ip, setIp] = useState<string>('');
+    const tableRef: any = useRef<CZHTableRef | null>(null);
     const [search,setSearch]=useState<any>({});
     // 列表
-    const columns:any = [
+    const columns:TableColumnsType<DbBackupVo> = [
         {
             title: 'ID',
             align: 'center',
@@ -59,11 +52,10 @@ const Index = (_props: any, ref: any) => {
             dataIndex: 'id',
             width: 150,
             align: 'center',
-            render: (id: number, item: any) => (
+            render: (id: number, item) => (
                 <div className='flexAllCenter pubbtnbox'>
                     <p style={{ color: colorPrimary }} onClick={() => {
                         xiazai(item)
-                        // window.open("/admin/backup/download/"+item.id)
                     }}>下载</p>
                     <p style={{ color: colorError }} onClick={() => huifu(item)}>恢复</p>
                     <p style={{ color: colorWarning }} onClick={() => del(item)}>删除</p>
@@ -83,6 +75,8 @@ const Index = (_props: any, ref: any) => {
                         if(!res.code && res.code!=500)
                         {
                             Helper.saveAs(res,item.file_name)
+                        }else{
+                            message.success(res.msg);
                         }
                     })
                 });
@@ -137,7 +131,7 @@ const Index = (_props: any, ref: any) => {
         tableRef.current.onRefresh()
     }
     // 获取列表数据
-    const getList = (info: CZHPageRequestProps, callback: (res:HttpResponse) => void) => {
+    const onRefresh = (info: PageDto, callback: (res:HttpResponse<PageInfoVo<DbBackupVo>>) => void) => {
         getBackDbListApi( {
             page: info.page,
             size: info.size,
@@ -146,10 +140,6 @@ const Index = (_props: any, ref: any) => {
         }).then(res => {
             callback(res)
         })
-    }
-    // 首次进入页面初始化
-    const onRefresh = (info: CZHPageRequestProps, callback: (res:HttpResponse) => void) => {
-        getList(info, callback)
     }
     const beifen=()=>{
         Modal.confirm({
@@ -208,7 +198,7 @@ const Index = (_props: any, ref: any) => {
                     }}>备份</Button>
                 ]}
             />
-            <CZHTable
+            <CZHTable<DbBackupVo>
                 ref={tableRef}
                 columns={columns}
                 onRefresh={onRefresh}

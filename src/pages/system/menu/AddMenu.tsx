@@ -1,7 +1,10 @@
-import React, { forwardRef, useState, useEffect } from 'react';
-import { Button, Form, Input, Select, Switch, App } from 'antd';
+import React, {forwardRef, useState, useEffect, useImperativeHandle} from 'react';
+import {Button, Form, Input, Select, Switch, App, message} from 'antd';
 import icon from './icon.json';
-import {addMenuApi, editMenuApi, getMenusByPidApi} from "../../../api/system/SystemApi";
+import {addMenuApi, editMenuApi, getMenusByPidApi} from "../../../api/MenuApi";
+import {GetMenusByPidVo} from "../../../types/models/menu/vo";
+import {HttpResponse} from "../../../util/request";
+import {CommonFormProps} from "../../../component/CZHModal/FormModal";
 
 const { Option } = Select;
 const levelList = [
@@ -9,16 +12,19 @@ const levelList = [
     { value: 2, label: '二级菜单' },
     { value: 3, label: '三级菜单' },
 ];
+export interface AddMenuProps extends CommonFormProps{
+    type: 'add' | 'edit',
+    data?:any,
+    level: number,
+    onOk?: () => void,
+}
+const Index = (_props: AddMenuProps, ref: any) => {
 
-const Index = (_props: any, ref: any) => {
-    const { message } = App.useApp();
-    const [firMenu, setFirMenu] = useState([] as any[]);
-    const [secMenu, setSecMenu] = useState([] as any[]);
-    const [loading, setLoading] = useState<boolean>(false);
-
+    const [firMenu, setFirMenu] = useState<GetMenusByPidVo[]>([]);
+    const [secMenu, setSecMenu] = useState<GetMenusByPidVo[]>([]);
+    const [form] = Form.useForm();
     useEffect(() => {
         if (_props.level > 1) {
-            console.log(_props.data)
             getMenus(1, 0);
             if (_props.level > 2) {
                 getMenus(2, _props.data.fid)
@@ -38,7 +44,7 @@ const Index = (_props: any, ref: any) => {
         })
     }
     const onFinish = (data: any) => {
-        setLoading(true);
+       _props.loading?.(true)
         if (data.level === 2) {
             data.pid = data.fid;
             data.icon = '';
@@ -56,31 +62,37 @@ const Index = (_props: any, ref: any) => {
             api=editMenuApi;
             data.id = _props.data.id;
         }
-        api(data).then((res:any) => {
+        api(data).then((res:HttpResponse<any>) => {
             if (res.code === 200) {
                 message.success(res.msg, 1.2)
+                _props.close?.()
                 _props.onOk && _props.onOk();
             } else {
                 message.error(res.msg, 1.2)
             }
-            setLoading(false);
-        })
+        }).finally(() => {
+            _props.loading?.(false);
+        });
     }
+    useImperativeHandle(ref, () => ({
+        form,
+    }))
     return (
         <Form
             onFinish={onFinish}
+            form={form}
             autoComplete="off"
             labelCol={{ flex: '82px' }}
             initialValues={{
-                level: Number(_props.level),
-                fid: _props.data.fid,
-                sid: _props.data.sid,
+                level: _props.level,
+                fid: _props.data?.fid,
+                sid: _props.data?.sid,
                 display: true,
-                icon: _props.data.icon,
-                name: _props.data.name,
-                path: _props.data.path,
-                route: _props.data.route,
-                sort: _props.data.sort || 1,
+                icon: _props.data?.icon,
+                name: _props.data?.name,
+                path: _props.data?.path,
+                route: _props.data?.route,
+                sort: _props.data?.sort || 1,
             }}
         >
             <Form.Item label='菜单等级' name='level' required>
@@ -129,7 +141,7 @@ const Index = (_props: any, ref: any) => {
                     <Switch checkedChildren="显示" unCheckedChildren="隐藏" />
                 </Form.Item>
             </div>
-            <Button loading={loading} type="primary" htmlType='submit' className='marglauto block margt20'>确定</Button>
+            {/*<Button loading={loading} type="primary" htmlType='submit' className='marglauto block margt20'>确定</Button>*/}
         </Form>
     )
 };

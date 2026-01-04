@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Input,App } from 'antd';
 import Helper from "../../util/Helper";
-import {editPwdApi, getPwdRuleApi} from "../../api/admin/AdminApi";
+import {editPwdApi, getPwdRuleApi} from "../../api/AdminApi";
 
 const Index = () => {
     const [form] = Form.useForm();

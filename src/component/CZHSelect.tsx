@@ -1,7 +1,6 @@
 import React, {forwardRef, useEffect, useRef, useState} from "react";
 import {Select, SelectProps} from 'antd';
-import  req from '../util/request';
-import {getAdminSelectListApi, getRoleSelectListApi} from "../api/common/CommonApi";
+import {getAdminSelectListApi, getRoleSelectListApi} from "../api/CommonApi";
 type SelectType = 'allrole' | 'alladmin';
 interface CZHSelectProps extends SelectProps{
     type:SelectType;

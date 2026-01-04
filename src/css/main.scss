@@ -1,0 +1,27 @@
+.asdTabs{
+  display: flex;
+  width: 100%;
+  flex:1;
+  .ant-tabs-content-holder{
+    display: flex;
+    flex:1;
+    .ant-tabs-content{
+      flex:1;
+      display: flex;
+    }
+    .ant-tabs-tabpane-active{
+      display: flex;
+      flex:1;
+      .container{
+        /*min-height: calc(100vh - 100px);*/
+        /*padding-bottom: 20px;*/
+        display: flex;
+        flex:1;
+        width: 100%;
+        flex-direction: column;
+        overflow-y: auto;
+      overflow-x: hidden;
+      }
+    }
+  }
+}

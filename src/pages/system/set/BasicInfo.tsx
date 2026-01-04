@@ -1,13 +1,16 @@
 import React, { useImperativeHandle, forwardRef, useRef, useState } from 'react';
-import { App, Button, Image, Switch, theme } from 'antd';
+import {App, Button, Image, message, Modal, Switch, TableColumnsType, theme} from 'antd';
 import Title from '../../../component/CZHTitle';
-import CZHTable, {CZHPageRequestProps} from "../../../component/CZHTable";
+import CZHTable, {CZHTableRef} from "../../../component/CZHTable";
 import CZHModal from '../../../component/CZHModal';
 import AddBasic from './AddBasic';  // 添加配置
 import Text from '../../../component/CZHText';
 import CZHTableSearch from "../../../component/CZHTableSearch";
-import {deleteSettingApi, settingListApi} from "../../../api/system/SystemApi";
+import {deleteSettingApi, settingListApi} from "../../../api/SystemApi";
 import {HttpResponse} from "../../../util/request";
+import {GetSettingListVo} from "../../../types/models/set/vo";
+import FormModal from "../../../component/CZHModal/FormModal";
+import {PageDto, PageInfoVo} from "../../../types/models/common";
 
 const typeList = ['', '文本', '数字', '图片', '图文', '开/关'];
 
@@ -15,12 +18,9 @@ const Index = (_props: any, ref: any) => {
 	const {
 		token: { colorPrimary, colorWarning, colorInfo, colorSuccess },
 	} = theme.useToken();
-	const { message, modal } = App.useApp();
-	const tableRef: any = useRef(null);
-	const [open, setOpen] = useState<boolean>(false);
-	const [row, setRow] = useState<any>({});
-	const [type, setType] = useState<string>();
-	const columns:any = [{
+	const tableRef: any = useRef<CZHTableRef | null>(null);
+	const columns:TableColumnsType<GetSettingListVo> = [
+        {
 		title: '配置ID',
 		align: 'center',
 		dataIndex: 'id',
@@ -35,7 +35,7 @@ const Index = (_props: any, ref: any) => {
 		align: 'center',
 		dataIndex: 'value',
 		ellipsis: true,
-		render: (value: string, item: any) => (
+		render: (value: string, item) => (
 			<React.Fragment>
 				{(item.type == 1 || item.type == 2) && value}
 				{item.type == 3 && <Image src={value} width={40} height={40} />}
@@ -62,15 +62,14 @@ const Index = (_props: any, ref: any) => {
 		align: 'center',
 
 		width: 150,
-		render: (id: number, item: any) => (
+		render: (id: number, item: GetSettingListVo) => (
 			<div className='flexAllCenter pubbtnbox'>
-				{/* <p style={{ color: colorPrimary }}>编辑</p>
-					{item.canDel == 1 && <p style={{ color: colorPrimary }}>删除</p>} */}
 				<Text onClick={() => {
-					item.type = Number(item.type)
-					setType('edit')
-					setRow(item)
-					setOpen(true)
+                    FormModal.open({
+                        title:"编辑配置",
+                        children:<AddBasic type={"edit"} data={item}  onOk={refresh}/>,
+                        width:696
+                    })
 				}}>编辑</Text>
 				{item.canDel == 1 && <Text onClick={() => del(id)}>删除</Text>}
 			</div>
@@ -80,29 +79,22 @@ const Index = (_props: any, ref: any) => {
 		refresh,
 	}))
 	const refresh = () => {
-		tableRef.current.onRefresh()
-	}
-	const getList = (info: CZHPageRequestProps, callback: (res:HttpResponse) => void) => {
-		settingListApi({
-			page: info.page,
-			size: info.size,
-			orderBy: ''
-		}).then(res => {
-			callback(res);
-		})
+		tableRef.current?.onRefresh()
 	}
 	// 首次进入页面初始化
-	const onRefresh = (info:CZHPageRequestProps, callback: (res:HttpResponse) => void) => {
-		getList(info, callback)
+	const onRefresh = (info:PageDto, callback: (res:HttpResponse<PageInfoVo<GetSettingListVo>>) => void) => {
+        settingListApi({
+            page: info.page,
+            size: info.size,
+            orderBy: ''
+        }).then(res => {
+            callback(res);
+        })
 	}
-	const onCancel = () => {
-		setRow({})
-		setType('')
-		setOpen(false);
-	}
+
 	// 删除
 	const del = (id: number) => {
-		modal.confirm({
+		Modal.confirm({
 			title: '警告提示',
 			content: '您要删除该项数据吗？删除后将无法恢复！',
 			centered: true,
@@ -123,32 +115,20 @@ const Index = (_props: any, ref: any) => {
 		<React.Fragment>
 			<CZHTableSearch
 			buttons={[<Button type="primary" onClick={() => {
-				setOpen(true)
+                FormModal.open({
+                    title:"添加配置",
+                    children:<AddBasic type={"add"}  onOk={refresh}/>,
+                    width:696
+                })
 			}}>添加配置</Button>]}
 			/>
 
-			<CZHTable
+			<CZHTable<GetSettingListVo>
 				ref={tableRef}
 				columns={columns}
 				onRefresh={onRefresh}
 				auto={true}
 			/>
-			{/* 添加/编辑 */}
-			<CZHModal
-				open={open}
-				width={696}
-				onCancel={onCancel}
-				title={(<Title title={`${type == 'edit' ? '编辑' : '添加'}配置`} />)}
-			>
-				<AddBasic
-					type={type}
-					data={row}
-					onOk={() => {
-						onCancel()
-						refresh()
-					}}
-				/>
-			</CZHModal>
 		</React.Fragment>
 	)
 };

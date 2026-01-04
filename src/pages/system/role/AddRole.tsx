@@ -1,7 +1,8 @@
 import React, { useImperativeHandle, forwardRef, useEffect, useState, useRef } from 'react';
-import { Button, Checkbox, Form, Input, App, Spin } from 'antd';
-import  req from '../../../util/request';
-import {addRoleApi, addRoleGetMenusApi, editRoleApi} from "../../../api/system/SystemApi";
+import {Button, Checkbox, Form, Input, App, Spin, message} from 'antd';
+import {addRoleApi, addRoleGetMenusApi, editRoleApi} from "../../../api/RoleApi";
+import {AddRoleGetMenusVo} from "../../../types/models/role/vo";
+import {CommonFormProps} from "../../../component/CZHModal/FormModal";
 
 interface CheckBoxValue {
     ids?: [];
@@ -11,7 +12,7 @@ interface CustomCheckBoxProps {
     onChange?: (value: CheckBoxValue) => void;
 }
 const CustomCheckBox: React.FC<CustomCheckBoxProps> = ({ value = {}, onChange }) => {
-    const [menu, setMenu] = useState<Array<{ id: number, name: string, child?: [], checked?: false }>>([]);
+    const [menu, setMenu] = useState<AddRoleGetMenusVo[]>([]);
     const [loading, setLoading] = useState(false);
     const triggerChange = (changedValue: { ids?: []; }) => {
         onChange?.(changedValue);
@@ -21,7 +22,7 @@ const CustomCheckBox: React.FC<CustomCheckBoxProps> = ({ value = {}, onChange })
     }, [])
     const getMenus = () => {
         setLoading(false);
-        addRoleGetMenusApi().then(res => {
+        addRoleGetMenusApi().then((res) => {
             if (res.code == 200) {
                 let ids: any = value;
                 let menu = res.data;
@@ -240,26 +241,22 @@ const CustomCheckBox: React.FC<CustomCheckBoxProps> = ({ value = {}, onChange })
         </div>
     )
 }
-const Index = (_props: any, ref: any) => {
-    const formRef: any = useRef(null);
-    const { message } = App.useApp();
-    const [loading, setLoading] = useState<boolean>(false);
 
-    useEffect(() => {
-
-    }, [])
+export interface AddRoleProps extends CommonFormProps{
+    type: 'add' | 'edit';
+    data?: any;
+    onOk?: () => void;
+}
+const Index = (_props: AddRoleProps, ref: any) => {
+    const [form]=Form.useForm()
 
     useImperativeHandle(ref, () => ({
-        refresh,
+        form,
     }))
-    const refresh = () => {
-        console.log('管理员列表');
-    }
     // 提交表单
     const onFinish = (data: any) => {
-        setLoading(true);
+        _props.loading?.(true);
         data.ids = JSON.stringify(data.ids);
-        // console.log(data);
         let api:any=addRoleApi;
         if (_props.type === 'edit') {
             api=editRoleApi;
@@ -268,21 +265,23 @@ const Index = (_props: any, ref: any) => {
         api(data).then((res:any) => {
             if (res.code === 200) {
                 message.success(res.msg);
+                _props.close?.();
                 _props.onOk && _props.onOk();
             } else {
                 message.error(res.msg);
             }
-            setLoading(false);
+        }).finally(() => {
+          _props.loading?.(false);
         })
     }
     return (
         <Form
-            ref={formRef}
+            form={form}
             onFinish={onFinish}
             initialValues={{
-                ids: _props.data.ids || [],
-                roleName: _props.data.roleName,
-                describe: _props.data.describe,
+                ids: _props.data?.ids || [],
+                roleName: _props.data?.roleName,
+                describe: _props.data?.describe,
             }}
         >
             <div className='flwp'>
@@ -293,11 +292,9 @@ const Index = (_props: any, ref: any) => {
                     <Input autoComplete='off' placeholder='请输入角色描述' />
                 </Form.Item>
                 <Form.Item className='row10' label='角色权限' name='ids' rules={[{ required: true, message: '请选择角色权限' }]}>
-                    {/* <Input className='noHeight' /> */}
                     <CustomCheckBox />
                 </Form.Item>
             </div>
-            <Button loading={loading} type="primary" htmlType='submit' className='marglauto block margt20'>确定</Button>
         </Form>
     )
 };

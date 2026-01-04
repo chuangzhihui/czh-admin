@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Button, Form, Input, App } from 'antd';
 import CZHFileList, { CZHFileItem} from '../../component/CZHFileComponent/CZHFileList';
-import {editAvatarApi} from "../../api/admin/AdminApi";
+import {editAvatarApi} from "../../api/AdminApi";
 
 interface types {
     value?: string;

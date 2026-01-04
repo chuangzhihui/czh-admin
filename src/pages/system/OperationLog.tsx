@@ -5,7 +5,7 @@ import CZHTable , {CZHPageRequestProps} from "../../component/CZHTable";
 import CZHSelect from "../../component/CZHSelect";
 import req, {HttpResponse} from '../../util/request';
 import CZHTableSearch from "../../component/CZHTableSearch";
-import {adminLogApi} from "../../api/admin/AdminApi";
+import {adminLogApi} from "../../api/AdminApi";
 
 const Index = (_props: any, ref: any) => {
     const {

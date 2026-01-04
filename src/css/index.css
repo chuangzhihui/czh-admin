@@ -12,10 +12,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-.container{
-  min-height: calc(100vh - 100px);
-  padding-bottom: 20px;
-}
+
+
 .searchView{
   background-color: rgba(0,0,0,0.02);
   padding: 20px;
@@ -30,23 +28,24 @@ code {
   background-color: rgba(0,0,0,0.02);
 }
 /* 清除table样式 */
-.ant-table-wrapper>div,.ant-table-wrapper>div>.ant-spin-container{height: 100%;}
-.ant-table{height: calc(100% - 64px);overflow: hidden;}
-.ant-table-wrapper .ant-table .ant-table-cell{border-bottom: 0;}
-.ant-table-wrapper .ant-table th.ant-table-cell::before{display: none;}
 .ant-table-wrapper .ant-table th.ant-table-cell{background-color: #fff;}
-/* .ant-table-wrapper .ant-table .ant-table-row:nth-child(2n-1) td.ant-table-cell{background-color: #fafafa;} */
-.ant-table-wrapper .ant-table-tbody > tr > td{border-bottom: 0;background-color: #f8f8f8;}
-.ant-table-wrapper .ant-table-tbody > tr:nth-child(2n) > td{background-color: #fff;}
-:where(.css-dev-only-do-not-override-1ety9t6).ant-table-wrapper .ant-table-tbody >tr.ant-table-row:nth-child(2n):hover>td{background: #fff;}
-.ant-pagination-total-text{font-size: 12px;color: #999;}
-.ant-table-wrapper .ant-pagination.ant-table-pagination{margin-bottom: 0;}
-.ant-table-wrapper .ant-table-body{overflow: auto !important;}
-/* .ant-table-wrapper .ant-table-body::-webkit-scrollbar{display: none;} */
 /* 清除modal样式 */
 .customerModal .ant-modal .ant-modal-content{padding: 0;}
+.customerModalFooter{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 12px 24px;
+    border-top: 1px solid #f0f0f0;
+    gap: 12px;
+    button{
+        min-width: 100px;
+        height: 36px;
+    }
+}
+.customerModal .ant-modal .ant-modal-content .ant-modal-footer{margin-top: 0}
 .ant-modal .ant-modal-header{border-bottom: 1px solid #f0f0f0;margin: 0;}
-.ant-modal .ant-modal-body{padding: 24px;}
+.ant-modal .ant-modal-body{padding:12px 24px 0 24px;}
 .ant-modal-confirm .ant-modal-confirm-content{margin-top: 20px !important;}
 .ant-modal-confirm .ant-modal-confirm-btns{margin-top: 40px;}
 .pointer{cursor: pointer !important;}
@@ -280,4 +279,7 @@ code {
 
 .expandedRowStyle{
   background: red;
+}
+.ant-modal-close{
+    z-index: 1 !important;
 }

@@ -42,7 +42,7 @@
 
       container = document.createElement('div');	//创建容器
       container.id = 'canbox'
-      container.style = "background-image: url('./public/bigbg.png');background-size: 100% 100%;background-color: #040F1D;"
+      container.style = "background-image: url('./public/bigbg.png');background-size: 100% 100%;background-color: #040F1D;position:fixed;left:0;top:0;z-index:-2;width:100vw;height:100vh"
       document.body.appendChild(container);			//将容器添加到页面上
       camera = new THREE.PerspectiveCamera(120, window.innerWidth / window.innerHeight, 1, 1500);		//创建透视相机设置相机角度大小等
       camera.position.set(0, 450, 2000);		//设置相机位置

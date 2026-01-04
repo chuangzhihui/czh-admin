@@ -1,9 +1,11 @@
-import React from 'react';
-import {Modal, ModalProps} from 'antd'
+import {Modal, ModalProps} from "antd";
+import React from "react";
 interface CZHModalProps extends ModalProps {
 
 }
 const CZHModal = (props: CZHModalProps) => {
+
+
     return(
         <Modal
             centered={true}
@@ -12,7 +14,10 @@ const CZHModal = (props: CZHModalProps) => {
             closeIcon={(<p className='iconfont icon-guanbi'></p>)}
             wrapClassName={"customerModal"}
             {...props}
-        ></Modal>
+        >
+            {props.children}
+        </Modal>
     );
 }
+
 export default CZHModal;

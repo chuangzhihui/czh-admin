@@ -1,15 +1,20 @@
-import React, {forwardRef, useEffect, useRef, useState} from 'react';
-import { Button, Form, Input, App } from 'antd';
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import {Button, Form, Input, App, message} from 'antd';
 import CustomerSelect from "../../../component/CZHSelect";
 import Helper from "../../../util/Helper";
-import {addAdminApi, editAdminApi, getPwdRuleApi} from "../../../api/admin/AdminApi";
+import {addAdminApi, editAdminApi, getPwdRuleApi} from "../../../api/AdminApi";
 import CZHUploadMedia, {
     CZHFileItemToString,
     StringToCZHFileItem
 } from "../../../component/CZHFileComponent/CZHUploadMedia";
-const Index = (_props: any, ref: any) => {
-    const { message } = App.useApp();
-    const formRef:any=useRef(null);
+import {CommonFormProps} from "../../../component/CZHModal/FormModal";
+export interface AddAdminProps extends CommonFormProps{
+    type: any,
+    data?: any,
+    onOk?: () => void;
+}
+const Index = (_props: AddAdminProps, ref: any) => {
+    const [form] = Form.useForm();
     const [pwdReg,setPwdReg]=useState<string>("");
     const [pwdRegTip,setPwdRegTip]=useState<string>("");
     useEffect(()=>{
@@ -22,40 +27,38 @@ const Index = (_props: any, ref: any) => {
                 message.error(res.msg, 1.2)
             }
         })
-        let img="https://50yanglao-1333745924.cos.ap-chengdu.myqcloud.com/admin/17563773236488549491.jpg,https://java.honghukeji.net:10443/uploads/admin/20250828/17562890908234597871.jpg";
-        formRef.current.setFieldsValue({
-            imgs:StringToCZHFileItem(img)
-        })
     },[])
     const onFinish = (data: any) => {
-        data.imgs=CZHFileItemToString(data.imgs);
-        console.log(data)
-        return
+        _props.loading?.(true)
         let api:any=addAdminApi;
         if (_props.type === 'edit') {
             data.adminId = _props.data.adminId;
             api=editAdminApi;
-
         }
         api(data).then((res:any) => {
             if (res.code == 200) {
                 message.success(res.msg, 1.2);
-                _props.onOk && _props.onOk();
+                _props.close?.();
+                _props.onOk?.();
             } else {
                 message.error(res.msg, 1.2)
             }
+        }).finally(()=>{
+            _props.loading?.(false)
         })
-
     }
+    useImperativeHandle(ref, () => ({
+        form,
+    }))
     return (
         <Form
-            ref={formRef}
+            form={form}
             onFinish={onFinish}
             autoComplete='off'
            layout="vertical"
             initialValues={{
-                userName: _props.data.userName,
-                roleId: _props.data.roleId,
+                userName: _props.data?.userName,
+                roleId: _props.data?.roleId,
             }}
         >
             <Form.Item label='用户昵称' name='userName' rules={[{ required: true, message: '请设置5-12位用户昵称' }]}>
@@ -78,10 +81,8 @@ const Index = (_props: any, ref: any) => {
             <Form.Item label='角色' name='roleId' rules={[{ required: true, message: '请选择角色' }]}>
                 <CustomerSelect type='allrole' />
             </Form.Item>
-            <Form.Item label='选择图片' name='imgs' rules={[{ required: true, message: '请选择图片' }]}>
-                <CZHUploadMedia max={2}  />
-            </Form.Item>
-            <Button type='primary' htmlType='submit' className='marglauto block margt20'>确定</Button>
+
+            {/*<Button type='primary' htmlType='submit' className='marglauto block margt20'>确定</Button>*/}
         </Form>
     )
 };

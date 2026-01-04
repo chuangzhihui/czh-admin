@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import type { FC } from 'react';
 import {App, Button, Col, Form, Input, Row, Switch} from 'antd';
 import Title from '../../component/CZHTitle';
 import type { FormInstance } from 'antd/es/form';
@@ -10,7 +9,7 @@ import {
     saveQiniuApi,
     saveTosApi,
     saveTxcosApi
-} from "../../api/system/SystemApi";
+} from "../../api/SystemApi";
 
 const Index = (_props: any, ref: any) => {
     const { message } = App.useApp();
@@ -36,6 +35,8 @@ const Index = (_props: any, ref: any) => {
                 res.data.qiniu.visible = false;
                 res.data.alioss.visible = false;
                 res.data.txcos.visible = false;
+                res.data.tos.visible = false;
+                res.data.local.visible = false;
 
                 if (res.data.visible == 1) {
                     res.data.qiniu.visible = true;
