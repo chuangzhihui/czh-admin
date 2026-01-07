@@ -3,10 +3,6 @@ import {Button, Form, Input, App, message} from 'antd';
 import CustomerSelect from "../../../component/CZHSelect";
 import Helper from "../../../util/Helper";
 import {addAdminApi, editAdminApi, getPwdRuleApi} from "../../../api/AdminApi";
-import CZHUploadMedia, {
-    CZHFileItemToString,
-    StringToCZHFileItem
-} from "../../../component/CZHFileComponent/CZHUploadMedia";
 import {CommonFormProps} from "../../../component/CZHModal/FormModal";
 export interface AddAdminProps extends CommonFormProps{
     type: any,

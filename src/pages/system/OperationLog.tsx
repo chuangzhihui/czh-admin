@@ -1,25 +1,22 @@
 import React, { useImperativeHandle, forwardRef, useRef, useState, useEffect } from 'react';
-import {Button, Input, theme, App, Tooltip, DatePicker} from 'antd';
+import {Button, Input, theme, App, Tooltip, DatePicker, TableColumnsType} from 'antd';
 import Title from '../../component/CZHTitle';
-import CZHTable , {CZHPageRequestProps} from "../../component/CZHTable";
+import CZHTable  from "../../component/CZHTable";
 import CZHSelect from "../../component/CZHSelect";
-import req, {HttpResponse} from '../../util/request';
 import CZHTableSearch from "../../component/CZHTableSearch";
 import {adminLogApi} from "../../api/AdminApi";
+import {PageDto, PageInfoVo} from "../../types/models/common";
+import {HttpResponse} from "../../util/request";
+import {AdminActionLog} from "../../types/models/admin/vo";
 
 const Index = (_props: any, ref: any) => {
     const {
         token: { colorPrimary },
     } = theme.useToken();
-    const { message, modal } = App.useApp();
     const tableRef: any = useRef(null);
-    const [admin_id, setAdminId] = useState<string>('');
-    const [desc, setDesc] = useState<string>('');
-    const [address, setAddress] = useState<string>('');
-    const [ip, setIp] = useState<string>('');
     const [search,setSearch]=useState<any>({});
     // 列表
-    const columns:any = [
+    const columns:TableColumnsType<AdminActionLog> = [
         {
             title: '序号',
             align: 'center',
@@ -97,12 +94,10 @@ const Index = (_props: any, ref: any) => {
         refresh,
     }))
     const refresh = () => {
-        console.log("refresh")
         tableRef.current.onRefresh(1)
     }
-    // 获取列表数据
-    const getList = (info: CZHPageRequestProps, callback:  (res:HttpResponse) => void) => {
-        console.log(info)
+    // 首次进入页面初始化
+    const onRefresh = (info: PageDto, callback: (res:HttpResponse<PageInfoVo<AdminActionLog>>) => void) => {
         adminLogApi({
             page: info.page,
             size: info.size,
@@ -111,10 +106,6 @@ const Index = (_props: any, ref: any) => {
         }).then(res => {
             callback(res)
         })
-    }
-    // 首次进入页面初始化
-    const onRefresh = (info: CZHPageRequestProps, callback: (res:HttpResponse) => void) => {
-        getList(info, callback)
     }
     return (
         <React.Fragment>
@@ -159,7 +150,7 @@ const Index = (_props: any, ref: any) => {
                     }
                 ]}
             />
-            <CZHTable
+            <CZHTable<AdminActionLog>
                 ref={tableRef}
                 columns={columns}
                 onRefresh={onRefresh}

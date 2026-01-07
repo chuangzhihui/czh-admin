@@ -20,6 +20,14 @@ export function httpBlob(url:string,data:any):Promise<HttpResponse<any> | Blob>{
 }
 function httpRequest<T>(url:string,data:any,method:Method):Promise<HttpResponse<T>>{
     url=API_URL+url;
+    if(method==="GET")
+    {
+        const query=new URLSearchParams(data);
+        if(query.toString())
+        {
+            url+="?"+query.toString();
+        }
+    }
     return new Promise<HttpResponse<T>>((resolve)=>{
         fetch(url, {
             method: method,

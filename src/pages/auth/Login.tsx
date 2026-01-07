@@ -5,7 +5,8 @@ import {
 } from "react-router-dom";
 import {getCaptchaApi, getSystemNameApi, LoginApi} from "../../api/LoginApi";
 import {HttpResponse} from "../../util/request";
-import {AdminLoginVo} from "../../types/models/vo";
+import {AdminLoginVo} from "../../types/models/login/vo";
+
 
 const Login = () => {
     let navigate = useNavigate();
