@@ -1,7 +1,7 @@
-import {PageDto, PageInfoVo} from "../types/models/common";
+import {PageDto, PageInfoVo} from "../models/common";
 import {httpGet, httpPost} from "../util/request";
-import {AddRoleGetMenusVo, Role} from "../types/models/role/vo";
-import {AddRoleDto, EditRoleDto} from "../types/models/role/dto";
+import {AddRoleGetMenusVo, Role} from "../models/role/vo";
+import {AddRoleDto, EditRoleDto} from "../models/role/dto";
 
 /**
  * 角色列表

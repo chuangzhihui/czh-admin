@@ -2,7 +2,7 @@ import React, {forwardRef, useState, useEffect, useImperativeHandle} from 'react
 import {Button, Form, Input, Select, Switch, App, message} from 'antd';
 import icon from './icon.json';
 import {addMenuApi, editMenuApi, getMenusByPidApi} from "../../../api/MenuApi";
-import {GetMenusByPidVo} from "../../../types/models/menu/vo";
+import {GetMenusByPidVo} from "../../../models/menu/vo";
 import {HttpResponse} from "../../../util/request";
 import {CommonFormProps} from "../../../component/CZHModal/FormModal";
 

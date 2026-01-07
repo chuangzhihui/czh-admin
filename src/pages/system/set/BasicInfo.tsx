@@ -8,9 +8,9 @@ import Text from '../../../component/CZHText';
 import CZHTableSearch from "../../../component/CZHTableSearch";
 import {deleteSettingApi, settingListApi} from "../../../api/SystemApi";
 import {HttpResponse} from "../../../util/request";
-import {GetSettingListVo} from "../../../types/models/set/vo";
+import {GetSettingListVo} from "../../../models/set/vo";
 import FormModal from "../../../component/CZHModal/FormModal";
-import {PageDto, PageInfoVo} from "../../../types/models/common";
+import {PageDto, PageInfoVo} from "../../../models/common";
 
 const typeList = ['', '文本', '数字', '图片', '图文', '开/关'];
 

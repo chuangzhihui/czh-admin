@@ -4,7 +4,7 @@ import { HttpResponse } from "../../util/request";
 import Helper from "../../util/Helper";
 import "./index.scss"
 import {SorterResult} from "antd/es/table/interface";
-import {PageDto, PageInfoVo} from "../../types/models/common";
+import {PageDto, PageInfoVo} from "../../models/common";
 
 export interface CustomerTableProps<T> extends TableProps<T> {
     data?: T[],

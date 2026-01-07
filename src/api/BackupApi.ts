@@ -1,7 +1,7 @@
 import {httpBlob, httpGet, httpPost} from "../util/request";
-import {DbBackUpListDto} from "../types/models/backup/dto";
-import {PageInfoVo} from "../types/models/common";
-import {DbBackupVo} from "../types/models/backup/vo";
+import {DbBackUpListDto} from "../models/backup/dto";
+import {PageInfoVo} from "../models/common";
+import {DbBackupVo} from "../models/backup/vo";
 
 /**
  * 备份数据库

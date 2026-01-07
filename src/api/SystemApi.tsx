@@ -1,5 +1,5 @@
 import {httpGet, httpPost} from "../util/request";
-import {GetSettingListVo, GetUploadConfigVo, UploadFiles} from "../types/models/set/vo";
+import {GetSettingListVo, GetUploadConfigVo, UploadFiles} from "../models/set/vo";
 import {
     AddFileDto,
     AddSettingDto,
@@ -9,8 +9,8 @@ import {
     SaveQiniuDto, SetAuthConfigDto,
     TosDto,
     TxCosDto
-} from "../types/models/set/dto";
-import {PageDto, PageInfoVo} from "../types/models/common";
+} from "../models/set/dto";
+import {PageDto, PageInfoVo} from "../models/common";
 
 
 /**

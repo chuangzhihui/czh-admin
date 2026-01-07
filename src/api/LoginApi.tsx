@@ -1,8 +1,8 @@
 
 
 import {httpGet, httpPost} from "../util/request";
-import {LoginDto} from "../types/models/login/dto";
-import {AdminLoginVo, GetSystemNameVo, GetVerifyVo} from "../types/models/login/vo";
+import {LoginDto} from "../models/login/dto";
+import {AdminLoginVo, GetSystemNameVo, GetVerifyVo} from "../models/login/vo";
 
 export const LoginApi=(params:LoginDto)=>{
     return httpPost<AdminLoginVo>("/admin/login/login",params)

@@ -1,7 +1,7 @@
 import React, { useImperativeHandle, forwardRef, useEffect, useState, useRef } from 'react';
 import {Button, Checkbox, Form, Input, App, Spin, message} from 'antd';
 import {addRoleApi, addRoleGetMenusApi, editRoleApi} from "../../../api/RoleApi";
-import {AddRoleGetMenusVo} from "../../../types/models/role/vo";
+import {AddRoleGetMenusVo} from "../../../models/role/vo";
 import {CommonFormProps} from "../../../component/CZHModal/FormModal";
 
 interface CheckBoxValue {

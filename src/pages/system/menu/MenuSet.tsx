@@ -7,9 +7,9 @@ import CZHTableSearch from "../../../component/CZHTableSearch";
 import CZHModal from "../../../component/CZHModal";
 import Text from "../../../component/CZHText";
 import {HttpResponse} from "../../../util/request";
-import {GetMenuListVo} from "../../../types/models/menu/vo";
+import {GetMenuListVo} from "../../../models/menu/vo";
 import {delMenuApi, menuListApi} from "../../../api/MenuApi";
-import {PageDto, PageInfoVo} from "../../../types/models/common";
+import {PageDto, PageInfoVo} from "../../../models/common";
 import FormModal from "../../../component/CZHModal/FormModal";  // 添加、编辑菜单
 
 const levelTxt = ['', '一级菜单', '二级菜单', '三级菜单']

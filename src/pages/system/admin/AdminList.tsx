@@ -7,9 +7,9 @@ import CZHTableSearch from "../../../component/CZHTableSearch";
 import Text from "../../../component/CZHText";
 import {adminListApi, changeAdminStatusApi, delAdminApi} from "../../../api/AdminApi";
 import {HttpResponse} from "../../../util/request";
-import {AdminListVo} from "../../../types/models/admin/vo";
+import {AdminListVo} from "../../../models/admin/vo";
 import FormModal from "../../../component/CZHModal/FormModal";
-import {PageDto, PageInfoVo} from "../../../types/models/common";
+import {PageDto, PageInfoVo} from "../../../models/common";
 
 const Index = (_props: any, ref: any) => {
 	const {

@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import {getCaptchaApi, getSystemNameApi, LoginApi} from "../../api/LoginApi";
 import {HttpResponse} from "../../util/request";
-import {AdminLoginVo} from "../../types/models/login/vo";
+import {AdminLoginVo} from "../../models/login/vo";
 
 
 const Login = () => {

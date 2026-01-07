@@ -5,9 +5,9 @@ import CZHTable  from "../../component/CZHTable";
 import CZHSelect from "../../component/CZHSelect";
 import CZHTableSearch from "../../component/CZHTableSearch";
 import {adminLogApi} from "../../api/AdminApi";
-import {PageDto, PageInfoVo} from "../../types/models/common";
+import {PageDto, PageInfoVo} from "../../models/common";
 import {HttpResponse} from "../../util/request";
-import {AdminActionLog} from "../../types/models/admin/vo";
+import {AdminActionLog} from "../../models/admin/vo";
 
 const Index = (_props: any, ref: any) => {
     const {

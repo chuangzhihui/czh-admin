@@ -6,9 +6,9 @@ import CZHTableSearch from "../../component/CZHTableSearch";
 import Helper from "../../util/Helper";
 
 import {HttpResponse} from "../../util/request";
-import {DbBackupVo} from "../../types/models/backup/vo";
+import {DbBackupVo} from "../../models/backup/vo";
 import {backUpDbApi, downloadApi, getBackDbListApi, removeBackUpFileApi, restoreDbApi} from "../../api/BackupApi";
-import {PageDto, PageInfoVo} from "../../types/models/common";
+import {PageDto, PageInfoVo} from "../../models/common";
 
 const Index = (_props: any, ref: any) => {
     const {

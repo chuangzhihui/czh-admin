@@ -1,5 +1,5 @@
 import {httpGet, httpPost} from "../util/request";
-import {AdminActionLog, AdminListVo, AuthConfig, GetLoginInfoVo} from "../types/models/admin/vo";
+import {AdminActionLog, AdminListVo, AuthConfig, GetLoginInfoVo} from "../models/admin/vo";
 import {
     AddAdminDto,
     AdminListDto,
@@ -7,8 +7,8 @@ import {
     EditAdminDto,
     EditAvatarDto,
     EditPwdDto
-} from "../types/models/admin/dto";
-import {PageInfoVo} from "../types/models/common";
+} from "../models/admin/dto";
+import {PageInfoVo} from "../models/common";
 
 
 /**

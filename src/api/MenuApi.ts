@@ -1,7 +1,7 @@
-import {AddMenuDto, EditMenuDto} from "../types/models/menu/dto";
+import {AddMenuDto, EditMenuDto} from "../models/menu/dto";
 import {httpGet, httpPost} from "../util/request";
-import {GetMenuListVo, GetMenusByPidVo} from "../types/models/menu/vo";
-import {PageDto, PageInfoVo} from "../types/models/common";
+import {GetMenuListVo, GetMenusByPidVo} from "../models/menu/vo";
+import {PageDto, PageInfoVo} from "../models/common";
 
 /**
  * 添加系统菜单

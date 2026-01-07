@@ -1,5 +1,5 @@
 import {httpPost} from "../util/request";
-import {SelectVo} from "../types/models/common";
+import {SelectVo} from "../models/common";
 
 
 /**

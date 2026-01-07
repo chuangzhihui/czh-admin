@@ -6,9 +6,9 @@ import CZHTableSearch from "../../../component/CZHTableSearch";
 import {HttpResponse} from "../../../util/request";
 import {delRoleApi, roleListApi} from "../../../api/RoleApi";
 import FormModal from "../../../component/CZHModal/FormModal";
-import {Role} from "../../../types/models/role/vo";
+import {Role} from "../../../models/role/vo";
 import type { TableColumnsType } from 'antd';
-import {PageDto, PageInfoVo} from "../../../types/models/common";
+import {PageDto, PageInfoVo} from "../../../models/common";
 const Index = (_props: any, _ref: any) => {
 	const {
 		token: { colorPrimary },
