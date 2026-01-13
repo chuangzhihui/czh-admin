@@ -26,7 +26,6 @@ interface CZHUploadProps extends  UploadProps  {
     onPercent?:(percent:number) => void;//进度回调
     onOk?:(res:CZHFileUploadResult)=>void;
     onError?:(error:string) => void;//上传错误回调
-
     crop?:boolean;//是否需要裁剪
     cropProps?:ImgCropProps;//裁剪参数
 
@@ -79,7 +78,7 @@ export  const customerUpload=async (row:any)=> {
             {
                 //上传到本地
                 console.log(xhr.responseText,"responseText");
-                let response:HttpResponse=JSON.parse(xhr.responseText);
+                let response:HttpResponse<any>=JSON.parse(xhr.responseText);
                 if(response.code===200)
                 {
                     url=response.data.url;
