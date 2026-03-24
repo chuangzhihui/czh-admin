@@ -189,6 +189,7 @@ const Index = (_props: any, ref: any) => {
 				columns={columns}
 				onRefresh={onRefresh}
 				auto={true}
+
 				scroll={{ x:1010 }}
 			/>
 

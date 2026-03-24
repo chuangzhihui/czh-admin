@@ -1,5 +1,5 @@
 import {httpGet, httpPost} from "../util/request";
-import {GetSettingListVo, GetUploadConfigVo, UploadFiles} from "../models/set/vo";
+import {GetSettingListVo, GetUploadConfigVo, GetUploadTokenVo, UploadFiles} from "../models/set/vo";
 import {
     AddFileDto,
     AddSettingDto,
@@ -83,7 +83,7 @@ export const settingListApi=(params:PageDto)=>{
  * 获取上传token
  */
 export const getUploadTokenApi=()=>{
-    return httpGet<any>("/admin/setting/getUploadToken",{});
+    return httpGet<GetUploadTokenVo>("/admin/setting/getUploadToken",{});
 }
 /**
  * 添加文件

@@ -1,6 +1,7 @@
-import React, { forwardRef, useEffect, useRef, useState, useMemo } from 'react';
+import React, {forwardRef, useEffect, useRef, useState, useMemo, useImperativeHandle} from 'react';
 import { Button, theme, ColorPicker } from 'antd';
 import type { ColorPickerProps, Color } from 'antd/es/color-picker';
+import {CommonFormProps} from "../../component/CZHModal/FormModal";
 
 const defaultArr = [1, 1, 1, 1, 1, 1, 1, 1];
 const colors = [
@@ -10,7 +11,10 @@ const colors = [
     { colorPrimary: '#37B7A5', colorSuccess: '#319EEB', colorWarning: '#FF895F', colorError: '#ff4d4f' },
 ]
 
-const Index = (props: any, _ref: any) => {
+const Index = (props: CommonFormProps, ref: any) => {
+    useImperativeHandle(ref, () => ({
+        form:{submit:onSave},
+    }))
     const [themeConfig, setThemeConfig] = useState({ colorPrimary: '', colorSuccess: '', colorWarning: '', colorError: '' });
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [color1, setColor1] = useState<Color | string>('');
@@ -182,12 +186,6 @@ const Index = (props: any, _ref: any) => {
                     <Button className='marginr12' type='primary' style={{ background: themeConfig.colorSuccess, borderColor: themeConfig.colorSuccess, }} onClick={() => reset(0)}>重置</Button>
                     <Button type='primary' style={{ background: themeConfig.colorPrimary, borderColor: themeConfig.colorPrimary }} onClick={Preview}>预览</Button>
                 </div>
-            </div>
-            <div className='btnbox flexCenter'>
-                <Button className='huibtn' onClick={() => {
-                    props.onCancel && props.onCancel();
-                }}>取消</Button>
-                <Button type='primary' onClick={onSave}>确定</Button>
             </div>
         </div>
     )

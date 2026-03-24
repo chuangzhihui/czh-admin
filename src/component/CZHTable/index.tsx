@@ -120,7 +120,8 @@ const CZHTableInner:CZHTableComponent<any>=<T,>(props: CustomerTableProps<T>, re
                     }
                 }}
                 dataSource={data}
-
+                bordered={true}
+                virtual
                 onChange={(page, filters, sorter:SorterResult<T> | SorterResult<T>[]) => {
                     var orderByStr: string = "";
                     let sort:SorterResult<T>;

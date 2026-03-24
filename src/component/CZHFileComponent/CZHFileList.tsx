@@ -8,6 +8,10 @@ import {ImgCropProps} from "antd-img-crop";
 import Helper from "../../util/Helper";
 import CZHRenderThumb from "./CZHRenderThumb";
 import {createRoot} from "react-dom/client";
+import {UploadFiles} from "../../models/set/vo";
+import FormModal from "../CZHModal/FormModal";
+import EditPwd from "../../pages/system/EditPwd";
+import AddFolder from "./AddFolder";
 const fileType = [
     { value: 1, label: '图片' },
     { value: 2, label: '视频文件' },
@@ -34,10 +38,14 @@ export interface fileListProps {
     cropProps?:ImgCropProps;//裁剪参数
     open?:boolean;//
 }
+
+
+
+
 const CZHFileList = (props:fileListProps) => {
 
     const [open, setOpen] = useState<boolean>(props.open || false);
-    const [list, setList] = useState([]);
+    const [list, setList] = useState<UploadFiles[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [pid, setPid] = useState(0);
@@ -99,23 +107,6 @@ const CZHFileList = (props:fileListProps) => {
     useEffect(() => {
         getList()
     }, [page, types, name, pid])
-    // // 暴露方法
-    // useImperativeHandle(_ref, () => ({
-    //     setOpen,
-    //     refresh,
-    //     openStatic
-    // }))
-    // const openStatic=(openOpt:fileListProps)=>{
-    //     console.log(openOpt)
-    //
-    // }
-    // const refresh = () => {
-    //     setOpen(true);
-    //     setPid(0);
-    //     setPage(1);
-    //     setValue([])
-    //     setFileName([{ id: 0, name: '根目录' }]);
-    // }
     useEffect(()=>{
         let dirName="admin";
         for(var i=1;i<fileName.length;i++)
@@ -160,24 +151,8 @@ const CZHFileList = (props:fileListProps) => {
             }
         }
     }
-    // 关闭新增文件夹弹窗
-    const onClose = () => {
-        setCreateVisible(false);
-    }
-    // 创建文件夹
-    const onFinish = (data:any) => {
-        setLoading(true);
-        uploadFile({
-            domain: 0,
-            type: 8,
-            name: data.name,
-            key: '',
-            url:"",
-            fileWidth:0,
-            fileHeight:0,
-            fileSize:0
-        })
-    }
+
+
     // 确认选中文件
     const onOk = () => {
         if (value.length === 0) {
@@ -278,6 +253,12 @@ const CZHFileList = (props:fileListProps) => {
                 )}
                 width={824}
                 onCancel={onCancel}
+                footer={<div className={"customerModalFooter"}>
+                    <Button onClick={()=>{
+                        onCancel();
+                    }}>取消</Button>
+                    <Button loading={loading} onClick={onOk} disabled={value.length===0} type={"primary"}>确定</Button>
+                </div>}
             >
                 <div className='flwp'>
                     <Input
@@ -311,14 +292,16 @@ const CZHFileList = (props:fileListProps) => {
                         accept={accept}
                         onPercent={(num) => {
                             setPercent(num);
-                            if (num >= 100) {
+                            if (num > 100) {
                                 setPercent(0);
                             }
                         }}
                         onError={(e) => {
+                            setPercent(0);
                             message.error(e);
                         }}
                         onOk={(res:CZHFileUploadResult) => {
+                            setPercent(0);
                             uploadFile(res)
                         }}
                     >
@@ -328,7 +311,15 @@ const CZHFileList = (props:fileListProps) => {
                             e.stopPropagation()
                         }}></span>}
                     </CZHUpload>
-                    <Button type='primary' danger onClick={() => setCreateVisible(true)}>创建文件夹</Button>
+                    <Button type='primary' danger onClick={() =>{
+                        FormModal.open({
+                            title:`创建文件夹`,
+                            children:<AddFolder pid={pid} onOk={()=>{
+                                getList();
+                            }} />,
+                            width:360
+                        })
+                    }}>创建文件夹</Button>
                 </div>
                 {/* 列表 */}
                 <div className='flwp uploadlist'>
@@ -369,6 +360,8 @@ const CZHFileList = (props:fileListProps) => {
                 </div>
                 {/* 页码 */}
                 {total > 0 && <Pagination
+                    style={{ marginBottom: 12 }}
+                    size={'small'}
                     current={page}
                     pageSize={24}
                     total={total}
@@ -380,23 +373,7 @@ const CZHFileList = (props:fileListProps) => {
                         setPage(page)
                     }}
                 />}
-                <Button type="primary" disabled={value.length===0} className='marglauto block margt20' onClick={onOk}>确定</Button>
-            </CZHModal>
-            {/* 创建文件夹 */}
-            <CZHModal
-                width={360}
-                open={createVisible}
-                title={(<Title title='创建文件夹' />)}
-                onCancel={onClose}
-            >
-                <Form
-                    onFinish={onFinish}
-                >
-                    <Form.Item label='文件夹名称' name='name'>
-                        <Input autoComplete='off' placeholder='请输入文件夹名称' />
-                    </Form.Item>
-                    <Button loading={loading} type="primary" htmlType='submit' className='marglauto block margt20'>确定</Button>
-                </Form>
+
             </CZHModal>
         </React.Fragment>
     )

@@ -12,6 +12,7 @@ import SetColor from './system/SetColor';  //主题配色
 import Loading from './Loading';
 import Page404 from "./Page404";
 import {getLoginInfoApi, logoutApi} from "../api/AdminApi";
+import FormModal from "../component/CZHModal/FormModal";
 const { Header, Content, Sider } = Layout;
 let rootSubmenuKeys:any[] = [];
 let tabRef:any[] = [];
@@ -47,25 +48,36 @@ const Index = (props:any) => {
     const [tabs, setTabs] = useState<any[]>([]);  // 右侧顶部打开的页面
     const [activeKey, setActiveKey] = useState('');  // 当前选中的tab页
     const [path, setPath] = useState('');  // 当前tab展示的内容页
-    const [pwdVisible, setPwdVisible] = useState(false);  // 修改密码弹出层
-    const [infoVisible, setInfoVisible] = useState(false);  // 修改个人信息弹出层
-    const [themeVisible, setThemeVisible] = useState(false);  // 主题弹出层
     const [info, setInfo] = useState({ avatar: '../static/default.png', username: '', systemName: '鸿鹄科技管理后台' })
     const [username, setUsername] = useState('');
     const [avatar, setAvatar] = useState('');
     const [sysName, setSysName] = useState('鸿鹄科技管理后台');
-    const [changePwdType,setChangePwdType]=useState(0);//修改密码的级别 0不提示 1警告 2强制
     // 右侧顶部目录
     const items = [
         {
             key: '1',
             label: (
-                <p onClick={() => setPwdVisible(true)}>修改密码</p>
+                <p onClick={() => {
+                    FormModal.open({
+                        title:`修改密码`,
+                        children:<EditPwd />,
+                        width:360
+                    })
+                }}>修改密码</p>
             )
         }, {
             key: '2',
             label: (
-                <p onClick={() => setInfoVisible(true)}>个人信息</p>
+                <p onClick={() => {
+                    FormModal.open({
+                        title:`个人信息`,
+                        children:  <UserInfo data={info} onOk={() => {
+                            getData()
+                        }} />,
+                        width:360
+                    })
+
+                }}>个人信息</p>
             )
         }, {
             key: '3',
@@ -110,10 +122,8 @@ const Index = (props:any) => {
                         username: res.data.username,
                         systemName: res.data.name }
                 )
-                setChangePwdType(res.data.changePwdType);
                 if(res.data.changePwdType>0)
                 {
-                    console.log("这里来了")
                     Modal.confirm({
                         title:"警告",
                         content:res.data.changePwdTip,
@@ -121,7 +131,12 @@ const Index = (props:any) => {
                         okText:"立即修改",
                         cancelButtonProps:{disabled:res.data.changePwdType==2},
                         onOk:()=>{
-                            setPwdVisible(true)
+                            FormModal.open({
+                                title:`修改密码`,
+                                closable:false,
+                                children:<EditPwd />,
+                                width:360
+                            })
                         }
                     })
                 }
@@ -326,12 +341,6 @@ const Index = (props:any) => {
                 }
             }
     }
-    // 关闭弹出层
-    const onCancel = () => {
-        setPwdVisible(false);
-        setInfoVisible(false);
-        setThemeVisible(false);
-    }
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Sider
@@ -378,7 +387,13 @@ const Index = (props:any) => {
 
                         }}></p>
                         <p className={`cursor iconfont icon-shuaxin margl24`} onClick={refresh}></p>
-                        <div className='zhut flexCenter' onClick={() => setThemeVisible(true)}>
+                        <div className='zhut flexCenter' onClick={() =>{
+                            FormModal.open({
+                                title:`设置主题`,
+                                children:<SetColor />,
+                                width:1172
+                            })
+                        }}>
                             <p className='iconfont icon-zhuti'></p>
                             <p>主题</p>
                         </div>
@@ -404,38 +419,6 @@ const Index = (props:any) => {
 
                 </Content>
             </Layout>
-            {/* 修改密码 */}
-            <CustomModal
-                open={pwdVisible}
-                title={(<Title title='修改密码' />)}
-                width={360}
-                onCancel={onCancel}
-                closable={changePwdType<2}
-                maskClosable={changePwdType<2}
-            >
-                <EditPwd />
-            </CustomModal>
-            {/* 修改个人信息 */}
-            <CustomModal
-                open={infoVisible}
-                title={(<Title title='个人信息' />)}
-                width={360}
-                onCancel={onCancel}
-            >
-                <UserInfo data={info} onOk={() => {
-                    onCancel();
-                    getData()
-                }} />
-            </CustomModal>
-            {/* 主题配色 */}
-            <CustomModal
-                open={themeVisible}
-                title={(<Title title='主题配色' />)}
-                width={1172}
-                onCancel={onCancel}
-            >
-                <SetColor onCancel={onCancel} />
-            </CustomModal>
         </Layout>
     )
 };

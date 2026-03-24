@@ -1,7 +1,8 @@
-import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { Button, Form, Input, App } from 'antd';
+import React, {forwardRef, useRef, useState, useEffect, useImperativeHandle} from 'react';
+import {Button, Form, Input, App, message} from 'antd';
 import CZHFileList, { CZHFileItem} from '../../component/CZHFileComponent/CZHFileList';
 import {editAvatarApi} from "../../api/AdminApi";
+import {CommonFormProps} from "../../component/CZHModal/FormModal";
 
 interface types {
     value?: string;
@@ -33,32 +34,36 @@ const CustomUpload: React.FC<types> = ({ value = '', onChange }) => {
                 chooseFile();
             }}>
                 {value === '' && <img alt='' src={'../../static/default.png'} />}
-                {value !== '' && <img alt='' src={value} style={{ width: '60px', height: '60px' }} />}
+                {value !== '' && <img alt='' src={value}  style={{ width: '60px', height: '60px' }} />}
                 <span className='zi'>修改头像</span>
             </div>
         </React.Fragment>
     )
 }
-const Index = (_props: any, ref: any) => {
+
+export interface UserInforProps extends CommonFormProps{
+    data:any;
+    onOk:()=>void;
+}
+const Index = (_props: UserInforProps, ref: any) => {
     const [form] = Form.useForm();
-    const { message } = App.useApp();
-    const [loading, setLoading] = useState(false);
-    const info=_props.data;
-    console.log(info)
+    useImperativeHandle(ref, () => ({
+        form,
+    }))
     useEffect(() => {
         form.setFieldsValue(_props.data)
     }, [])
     const onFinish = (data: any) => {
-        console.log(data)
-        setLoading(true)
+        _props.loading?.(true)
         editAvatarApi(data).then(res => {
-            if (res.code == 1) {
+            _props.loading?.(false)
+            if (res.code == 200) {
                 message.success(res.msg, 1.2)
+                _props.close?.();
                 _props.onOk()
             } else {
                 message.error(res.msg, 1.2)
             }
-            setLoading(false)
         })
     }
     return (
@@ -73,7 +78,6 @@ const Index = (_props: any, ref: any) => {
             <Form.Item label='我的昵称' name='username' rules={[{ required: true, message: '请输入昵称' }]}>
                 <Input placeholder='请输入昵称' />
             </Form.Item>
-            <Button loading={loading} type="primary" htmlType='submit' className='marglauto block margt20'>确定</Button>
         </Form>
     )
 };

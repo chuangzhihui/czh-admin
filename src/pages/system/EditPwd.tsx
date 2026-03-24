@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Form, Input,App } from 'antd';
+import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
+import {Button, Form, Input, App, message} from 'antd';
 import Helper from "../../util/Helper";
 import {editPwdApi, getPwdRuleApi} from "../../api/AdminApi";
+import {CommonFormProps} from "../../component/CZHModal/FormModal";
 
-const Index = () => {
+const Index = (props:CommonFormProps,ref:any) => {
     const [form] = Form.useForm();
-    const { message } = App.useApp();
-    const [loading, setLoading] = useState(false);
     const [pwdReg,setPwdReg]=useState<string>("");
     const [pwdRegTip,setPwdRegTip]=useState<string>("");
     useEffect(()=>{
@@ -20,9 +19,13 @@ const Index = () => {
             }
         })
     },[])
+    useImperativeHandle(ref, () => ({
+        form,
+    }))
     const onFinish = (data: any) => {
-        setLoading(true);
+        props.loading?.(true)
         editPwdApi(data).then((res:any) => {
+            props.loading?.(false)
             if (res.code === 200) {
                 localStorage.removeItem('czhToken')
                 message.success('修改成功，请重新登录！', 1.2, () => {
@@ -65,9 +68,8 @@ const Index = () => {
             })]} >
                 <Input.Password placeholder='请再次输入新密码' />
             </Form.Item>
-            <Button loading={loading} type="primary" htmlType='submit' className='marglauto block margt20'>确定</Button>
         </Form>
     )
 }
 
-export default Index;
+export default forwardRef(Index);

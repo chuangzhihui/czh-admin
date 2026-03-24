@@ -15,10 +15,7 @@ code {
 
 
 .searchView{
-  background-color: rgba(0,0,0,0.02);
-  padding: 20px;
-  padding-bottom: 10px;
-  padding-top: 10px;
+  padding: 10px 20px 0 20px;
 }
 .searchView .ant-col{
   height: auto;
@@ -28,7 +25,7 @@ code {
   background-color: rgba(0,0,0,0.02);
 }
 /* 清除table样式 */
-.ant-table-wrapper .ant-table th.ant-table-cell{background-color: #fff;}
+/*.ant-table-wrapper .ant-table th.ant-table-cell{background-color: #fff;}*/
 /* 清除modal样式 */
 .customerModal .ant-modal .ant-modal-content{padding: 0;}
 .customerModalFooter{

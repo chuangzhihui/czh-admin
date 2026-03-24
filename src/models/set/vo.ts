@@ -1,3 +1,5 @@
+import {getUploadTokenApi} from "../../api/SystemApi";
+
 /**
  * GetUploadConfigVo
  */
@@ -112,7 +114,11 @@ export interface GetSettingListVo {
     value: string;
     [property: string]: any;
 }
-
+export interface GetUploadTokenVo{
+    token: string;//上传token
+    host:string;//上传地址
+    type:number;//上传类型 1七牛 2阿里云 3腾讯云 4本地 5火山云
+}
 /**
  * 文件库(UploadFiles)表实体类
  *

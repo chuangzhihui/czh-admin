@@ -1,14 +1,15 @@
-import {Button, Modal} from "antd";
+import {Button, Modal, ModalProps} from "antd";
 import React, {cloneElement, ReactElement, useRef, useState} from "react";
 import {createRoot} from "react-dom/client";
 import { ConfigProvider } from 'antd';
 import locale from 'antd/locale/zh_CN';
 import Title from "../CZHTitle";
-export interface FormModalProps{
+export interface FormModalProps  {
     title:string;//弹窗标题
     width?:number;//弹窗宽度
     children:React.ReactNode;//弹窗内容
     open?:boolean;//是否显示
+    closable?:boolean;
     onClose?:()=>void;
 }
 export interface CommonFormProps{
@@ -39,11 +40,13 @@ const FormModal=(props:FormModalProps)=>{
         <Modal
             open={open}
             centered={true}
-            maskClosable={false}
+            maskClosable={props.closable !== false}
+            closable={props.closable}
+            keyboard={props.closable !== false}
             destroyOnHidden={true}
             title={<Title title={title} />}
             footer={<div className={"customerModalFooter"}>
-                <Button onClick={closeModal} type={"default"}>取消</Button>
+                {props.closable !== false && <Button onClick={closeModal}>取消</Button>}
                 <Button loading={loading} onClick={()=>{
                     console.log(childRef.current?.form);
                     childRef.current?.form.submit();
@@ -53,6 +56,7 @@ const FormModal=(props:FormModalProps)=>{
             wrapClassName={"customerModal"}
             width={width}
             onCancel={closeModal}
+
         >
             {Children}
         </Modal>
